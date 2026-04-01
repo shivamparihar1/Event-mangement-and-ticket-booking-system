@@ -15,7 +15,7 @@ const createEvent = async (req, res) => {
     location,
     price,
     totalSeats,
-    availableSeats: totalSeats, // initially available = total
+    availableSeats: totalSeats,
     category,
   });
 
@@ -56,4 +56,19 @@ const deleteEvent = async (req, res) => {
   res.status(200).json({ message: "Event deleted successfully" });
 };
 
-module.exports = { createEvent, updateEvent, deleteEvent };
+// GET ALL EVENTS
+const getAllEvents = async (req, res) => {
+  const events = await Event.find();
+
+  if (events.length === 0) {
+    return res.status(404).json({ message: "No events found" });
+  }
+
+  res.status(200).json({
+    message: "Events fetched successfully",
+    totalEvents: events.length,
+    events,
+  });
+};
+
+module.exports = { createEvent, updateEvent, deleteEvent, getAllEvents };
