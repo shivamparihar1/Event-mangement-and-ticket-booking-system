@@ -40,8 +40,6 @@ const bookTicket = async (req, res) => {
 const getMyBookings = async (req, res) => {
   const { userId } = req.params;
 
-  // us user ki saari bookings dhundho
-  // populate se eventId ki jagah pura event ka data aayega
   const bookings = await Booking.find({ userId }).populate("eventId", "title date location price category");
 
   if (bookings.length === 0) {
@@ -55,4 +53,22 @@ const getMyBookings = async (req, res) => {
   });
 };
 
-module.exports = { bookTicket, getMyBookings };
+// GET ALL BOOKINGS (ADMIN)
+const getAllBookings = async (req, res) => {
+  
+  const bookings = await Booking.find()
+    .populate("userId", "name email")
+    .populate("eventId", "title date location price");
+
+  if (bookings.length === 0) {
+    return res.status(404).json({ message: "No bookings found" });
+  }
+
+  res.status(200).json({
+    message: "All bookings fetched successfully",
+    totalBookings: bookings.length,
+    bookings,
+  });
+};
+
+module.exports = { bookTicket, getMyBookings, getAllBookings };
