@@ -71,4 +71,18 @@ const getAllEvents = async (req, res) => {
   });
 };
 
-module.exports = { createEvent, updateEvent, deleteEvent, getAllEvents };
+// GET SINGLE EVENT BY ID
+const getEventById = async (req, res) => {
+  const event = await Event.findById(req.params.id);
+
+  if (!event) {
+    return res.status(404).json({ message: "Event not found" });
+  }
+
+  res.status(200).json({
+    message: "Event fetched successfully",
+    event,
+  });
+};
+
+module.exports = { createEvent, updateEvent, deleteEvent, getAllEvents, getEventById };
