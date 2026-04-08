@@ -53,9 +53,8 @@ const getMyBookings = async (req, res) => {
   });
 };
 
-// GET ALL BOOKINGS (ADMIN)
+// GET ALL BOOKINGS
 const getAllBookings = async (req, res) => {
-  
   const bookings = await Booking.find()
     .populate("userId", "name email")
     .populate("eventId", "title date location price");
@@ -71,4 +70,36 @@ const getAllBookings = async (req, res) => {
   });
 };
 
-module.exports = { bookTicket, getMyBookings, getAllBookings };
+// CANCEL BOOKING
+const cancelBooking = async (req, res) => {
+  const { bookingId } = req.params;
+
+  // find booking
+  const booking = await Booking.findById(bookingId);
+  if (!booking) {
+    return res.status(404).json({ message: "Booking not found" });
+  }
+
+  // check if booking already cancelled
+  if (booking.status === "cancelled") {
+    return res.status(400).json({ message: "Booking already cancelled" });
+  }
+
+  // increase event available seats
+  const event = await Event.findById(booking.eventId);
+  if (event) {
+    event.availableSeats = event.availableSeats + booking.ticketsBooked;
+    await event.save();
+  }
+
+  // booking status cancelled
+  booking.status = "cancelled";
+  await booking.save();
+
+  res.status(200).json({
+    message: "Booking cancelled successfully",
+    booking,
+  });
+};
+
+module.exports = { bookTicket, getMyBookings, getAllBookings, cancelBooking };
