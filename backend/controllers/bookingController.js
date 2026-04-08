@@ -9,21 +9,17 @@ const bookTicket = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // check event exists
   const event = await Event.findById(eventId);
   if (!event) {
     return res.status(404).json({ message: "Event not found" });
   }
 
-  // check seats available
   if (event.availableSeats < ticketsBooked) {
     return res.status(400).json({ message: "Not enough seats available" });
   }
 
-  // calculate total price
   const totalPrice = event.price * ticketsBooked;
 
-  // save booking
   const booking = await Booking.create({
     userId,
     eventId,
@@ -31,7 +27,6 @@ const bookTicket = async (req, res) => {
     totalPrice,
   });
 
-  // reduce available seats in event
   event.availableSeats = event.availableSeats - ticketsBooked;
   await event.save();
 
@@ -41,4 +36,23 @@ const bookTicket = async (req, res) => {
   });
 };
 
-module.exports = { bookTicket };
+// GET MY BOOKINGS
+const getMyBookings = async (req, res) => {
+  const { userId } = req.params;
+
+  // us user ki saari bookings dhundho
+  // populate se eventId ki jagah pura event ka data aayega
+  const bookings = await Booking.find({ userId }).populate("eventId", "title date location price category");
+
+  if (bookings.length === 0) {
+    return res.status(404).json({ message: "No bookings found" });
+  }
+
+  res.status(200).json({
+    message: "Bookings fetched successfully",
+    totalBookings: bookings.length,
+    bookings,
+  });
+};
+
+module.exports = { bookTicket, getMyBookings };
