@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events | EventSphere</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+
+    <!-- NAVBAR -->
+    <nav class="flex items-center justify-between px-10 py-4 bg-white shadow-md sticky top-0 z-50">
+      <h1 class="text-2xl font-bold text-indigo-600">🎟️ EventSphere</h1>
+      <div class="flex gap-4 items-center">
+        <a href="/index.html" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
+        <a href="/events.html" class="text-indigo-600 font-semibold">Events</a>
+        <a href="/my-bookings.html" class="text-gray-600 hover:text-indigo-600 font-medium">My Bookings</a>
+        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-white font-medium">Logout</button>
+      </div>
+    </nav>
+
+    <!-- HEADER -->
+    <section class="bg-gradient-to-r from-indigo-600 to-purple-600 px-10 py-14 text-center text-white">
+      <h2 class="text-4xl font-bold mb-3">Upcoming Events</h2>
+      <p class="text-indigo-200 text-lg">Browse and book your favourite events</p>
+
+      <!-- SEARCH -->
+      <div class="mt-8 flex justify-center">
+        <div class="flex items-center bg-white rounded-xl px-4 py-3 w-full max-w-lg shadow-lg">
+          <span class="text-gray-400 mr-3">🔍</span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search events..."
+            class="w-full text-gray-800 text-sm outline-none"
+          />
+        </div>
+      </div>
+
+      <!-- CATEGORY FILTER -->
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <button onclick="filterCategory('all')" class="category-btn bg-white text-indigo-600 px-5 py-2 rounded-full text-sm font-semibold">All</button>
+        <button onclick="filterCategory('Technical')" class="category-btn bg-indigo-500 text-white px-5 py-2 rounded-full text-sm font-semibold">💻 Technical</button>
+        <button onclick="filterCategory('Cultural')" class="category-btn bg-indigo-500 text-white px-5 py-2 rounded-full text-sm font-semibold">🎭 Cultural</button>
+        <button onclick="filterCategory('Sports')" class="category-btn bg-indigo-500 text-white px-5 py-2 rounded-full text-sm font-semibold">⚽ Sports</button>
+        <button onclick="filterCategory('Workshop')" class="category-btn bg-indigo-500 text-white px-5 py-2 rounded-full text-sm font-semibold">🎓 Workshop</button>
+        <button onclick="filterCategory('Seminar')" class="category-btn bg-indigo-500 text-white px-5 py-2 rounded-full text-sm font-semibold">🎤 Seminar</button>
+      </div>
+    </section>
+
+    <!-- EVENTS GRID -->
+    <section class="px-10 py-12">
+      <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- events yahan JS se load honge -->
+      </div>
+
+      <!-- NO EVENTS -->
+      <p id="noEvents" class="text-center text-gray-400 text-lg mt-10 hidden">No events found.</p>
+
+      <!-- LOADING -->
+      <p id="loading" class="text-center text-indigo-500 text-lg mt-10">Loading events...</p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-6 text-gray-400 bg-white border-t mt-10">
+      © 2026 EventSphere. All rights reserved.
+    </footer>
+
+    <script>
+      let allEvents = [];
+
+      // events fetch when page loads
+      window.onload = async () => {
+        await fetchEvents();
+      };
+
+      async function fetchEvents() {
+        try {
+          const response = await fetch("http://localhost:5000/api/events/all");
+          const data = await response.json();
+
+          document.getElementById("loading").classList.add("hidden");
+
+          if (!response.ok) {
+            document.getElementById("noEvents").classList.remove("hidden");
+            return;
+          }
+
+          allEvents = data.events;
+          renderEvents(allEvents);
+
+        } catch (error) {
+          document.getElementById("loading").textContent = "Failed to load events.";
+        }
+      }
+
+      function renderEvents(events) {
+        const grid = document.getElementById("eventsGrid");
+        const noEvents = document.getElementById("noEvents");
+
+        grid.innerHTML = "";
+
+        if (events.length === 0) {
+          noEvents.classList.remove("hidden");
+          return;
+        }
+
+        noEvents.classList.add("hidden");
+
+        events.forEach((event) => {
+          const card = `
+            <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden">
+
+              <!-- COLOR BANNER -->
+              <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3"></div>
+
+              <div class="p-6">
+                <!-- CATEGORY BADGE -->
+                <span class="bg-indigo-100 text-indigo-600 text-xs font-semibold px-3 py-1 rounded-full">
+                  ${event.category}
+                </span>
+
+                <!-- TITLE -->
+                <h3 class="text-xl font-bold text-gray-900 mt-3 mb-2">${event.title}</h3>
+
+                <!-- DESCRIPTION -->
+                <p class="text-gray-500 text-sm mb-4 line-clamp-2">${event.description}</p>
+
+                <!-- DETAILS -->
+                <div class="space-y-2 text-sm text-gray-600 mb-4">
+                  <p>📅 <span class="font-medium">${event.date}</span></p>
+                  <p>📍 <span class="font-medium">${event.location}</span></p>
+                  <p>🪑 <span class="font-medium">${event.availableSeats} seats left</span></p>
+                </div>
+
+                <!-- PRICE + BUTTON -->
+                <div class="flex items-center justify-between mt-4">
+                  <p class="text-2xl font-bold text-indigo-600">₹${event.price}</p>
+                  <button
+                    onclick="window.location.href='/event-detail.html?id=${event._id}'"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition"
+                  >
+                    Book Now →
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          grid.innerHTML += card;
+        });
+      }
+
+      // search
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = allEvents.filter((event) =>
+          event.title.toLowerCase().includes(query) ||
+          event.location.toLowerCase().includes(query) ||
+          event.category.toLowerCase().includes(query)
+        );
+        renderEvents(filtered);
+      });
+
+      // category filter
+      function filterCategory(category) {
+        if (category === "all") {
+          renderEvents(allEvents);
+        } else {
+          const filtered = allEvents.filter((event) => event.category === category);
+          renderEvents(filtered);
+        }
+      }
+
+      // logout
+      function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+      }
+    </script>
+
+  </body>
+</html>

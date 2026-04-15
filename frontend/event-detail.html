@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Detail | EventSphere</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+
+    <!-- NAVBAR -->
+    <nav class="flex items-center justify-between px-10 py-4 bg-white shadow-md sticky top-0 z-50">
+      <h1 class="text-2xl font-bold text-indigo-600">🎟️ EventSphere</h1>
+      <div class="flex gap-4 items-center">
+        <a href="/index.html" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
+        <a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>
+        <a href="/my-bookings.html" class="text-gray-600 hover:text-indigo-600 font-medium">My Bookings</a>
+        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-white font-medium">Logout</button>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div id="eventContent" class="max-w-4xl mx-auto px-6 py-12">
+      <p id="loading" class="text-center text-indigo-500 text-lg">Loading event...</p>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-6 text-gray-400 bg-white border-t mt-10">
+      © 2026 EventSphere. All rights reserved.
+    </footer>
+
+    <script>
+      // URL se event id lo
+      const params = new URLSearchParams(window.location.search);
+      const eventId = params.get("id");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      window.onload = async () => {
+        if (!eventId) {
+          document.getElementById("loading").textContent = "Event not found.";
+          return;
+        }
+        await fetchEvent();
+      };
+
+      async function fetchEvent() {
+        try {
+          const response = await fetch(`http://localhost:5000/api/events/${eventId}`);
+          const data = await response.json();
+
+          document.getElementById("loading").classList.add("hidden");
+
+          if (!response.ok) {
+            document.getElementById("eventContent").innerHTML = `<p class="text-center text-red-500">Event not found.</p>`;
+            return;
+          }
+
+          renderEvent(data.event);
+
+        } catch (error) {
+          document.getElementById("loading").textContent = "Failed to load event.";
+        }
+      }
+
+      function renderEvent(event) {
+        const content = document.getElementById("eventContent");
+
+        content.innerHTML = `
+          <div>
+            <!-- BACK BUTTON -->
+            <button onclick="window.history.back()" class="text-indigo-600 font-medium mb-6 flex items-center gap-2 hover:underline">
+              ← Back to Events
+            </button>
+
+            <!-- EVENT CARD -->
+            <div class="bg-white rounded-3xl shadow-lg overflow-hidden">
+
+              <!-- TOP BANNER -->
+              <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-10 py-12 text-white">
+                <span class="bg-white text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">
+                  ${event.category}
+                </span>
+                <h2 class="text-4xl font-bold mt-4 mb-2">${event.title}</h2>
+                <p class="text-indigo-200 text-lg">${event.description}</p>
+              </div>
+
+              <!-- EVENT DETAILS -->
+              <div class="px-10 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div class="space-y-4">
+                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
+                    <span class="text-2xl">📅</span>
+                    <div>
+                      <p class="text-gray-400 text-xs font-medium">Date</p>
+                      <p class="text-gray-800 font-semibold">${event.date}</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
+                    <span class="text-2xl">📍</span>
+                    <div>
+                      <p class="text-gray-400 text-xs font-medium">Location</p>
+                      <p class="text-gray-800 font-semibold">${event.location}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
+                    <span class="text-2xl">🪑</span>
+                    <div>
+                      <p class="text-gray-400 text-xs font-medium">Available Seats</p>
+                      <p class="text-gray-800 font-semibold">${event.availableSeats} / ${event.totalSeats}</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
+                    <span class="text-2xl">💰</span>
+                    <div>
+                      <p class="text-gray-400 text-xs font-medium">Price per Ticket</p>
+                      <p class="text-2xl font-bold text-indigo-600">₹${event.price}</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- BOOKING SECTION -->
+              <div class="px-10 py-8 border-t bg-gray-50">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Book Your Tickets</h3>
+
+                <!-- ERROR -->
+                <p id="errorMsg" class="text-red-500 text-sm bg-red-50 px-4 py-2 rounded-lg mb-4 hidden"></p>
+
+                <!-- SUCCESS -->
+                <p id="successMsg" class="text-green-600 text-sm bg-green-50 px-4 py-2 rounded-lg mb-4 hidden"></p>
+
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 bg-white focus-within:border-indigo-500 transition">
+                    <span class="text-gray-400 mr-3">🎟️</span>
+                    <input
+                      type="number"
+                      id="ticketCount"
+                      placeholder="Number of tickets"
+                      min="1"
+                      max="${event.availableSeats}"
+                      class="w-40 text-gray-800 text-sm outline-none bg-transparent"
+                    />
+                  </div>
+
+                  <button
+                    id="bookBtn"
+                    onclick="bookTicket('${event._id}', ${event.price})"
+                    class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition shadow-lg shadow-indigo-200"
+                  >
+                    Book Now →
+                  </button>
+                </div>
+
+                <p class="text-gray-400 text-sm mt-3">Total: ₹<span id="totalPrice">0</span></p>
+
+              </div>
+            </div>
+          </div>
+        `;
+
+        // ticket count change hone pe total price update karo
+        document.getElementById("ticketCount").addEventListener("input", (e) => {
+          const count = e.target.value;
+          document.getElementById("totalPrice").textContent = count * event.price;
+        });
+      }
+
+      async function bookTicket(eventId, price) {
+        const errorMsg = document.getElementById("errorMsg");
+        const successMsg = document.getElementById("successMsg");
+        const bookBtn = document.getElementById("bookBtn");
+        const ticketCount = document.getElementById("ticketCount").value;
+
+        errorMsg.classList.add("hidden");
+        successMsg.classList.add("hidden");
+
+        if (!user) {
+          errorMsg.textContent = "Please login first to book tickets.";
+          errorMsg.classList.remove("hidden");
+          setTimeout(() => { window.location.href = "/login.html"; }, 1500);
+          return;
+        }
+
+        if (!ticketCount || ticketCount < 1) {
+          errorMsg.textContent = "Please enter number of tickets.";
+          errorMsg.classList.remove("hidden");
+          return;
+        }
+
+        bookBtn.textContent = "Booking...";
+        bookBtn.disabled = true;
+
+        try {
+          const response = await fetch("http://localhost:5000/api/bookings/book", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: user.id,
+              eventId: eventId,
+              ticketsBooked: parseInt(ticketCount),
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            errorMsg.textContent = data.message;
+            errorMsg.classList.remove("hidden");
+            bookBtn.textContent = "Book Now →";
+            bookBtn.disabled = false;
+            return;
+          }
+
+          successMsg.textContent = "Tickets booked successfully! Redirecting to my bookings...";
+          successMsg.classList.remove("hidden");
+
+          setTimeout(() => {
+            window.location.href = "/my-bookings.html";
+          }, 2000);
+
+        } catch (error) {
+          errorMsg.textContent = "Something went wrong. Please try again.";
+          errorMsg.classList.remove("hidden");
+          bookBtn.textContent = "Book Now →";
+          bookBtn.disabled = false;
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+      }
+    </script>
+
+  </body>
+</html>
