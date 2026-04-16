@@ -2,7 +2,7 @@ const Event = require("../models/Event");
 
 // CREATE EVENT
 const createEvent = async (req, res) => {
-  const { title, description, date, location, price, totalSeats, category } = req.body;
+  const { title, description, date, location, price, totalSeats, category, image } = req.body;
 
   if (!title || !description || !date || !location || !price || !totalSeats || !category) {
     return res.status(400).json({ message: "All fields are required" });
@@ -17,6 +17,7 @@ const createEvent = async (req, res) => {
     totalSeats,
     availableSeats: totalSeats,
     category,
+    image: image || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop&q=60"
   });
 
   res.status(201).json({

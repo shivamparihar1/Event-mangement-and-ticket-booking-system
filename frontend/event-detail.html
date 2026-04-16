@@ -10,12 +10,9 @@
 
     <!-- NAVBAR -->
     <nav class="flex items-center justify-between px-10 py-4 bg-white shadow-md sticky top-0 z-50">
-      <h1 class="text-2xl font-bold text-indigo-600">🎟️ EventSphere</h1>
-      <div class="flex gap-4 items-center">
-        <a href="/index.html" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
-        <a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>
-        <a href="/my-bookings.html" class="text-gray-600 hover:text-indigo-600 font-medium">My Bookings</a>
-        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-white font-medium">Logout</button>
+      <h1 class="text-2xl font-extrabold">🎟️ <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-500">EventSphere</span></h1>
+      <div id="navLinks" class="flex gap-4 items-center">
+        <!-- JS will populate this -->
       </div>
     </nav>
 
@@ -37,12 +34,35 @@
       const user = JSON.parse(localStorage.getItem("user"));
 
       window.onload = async () => {
+        updateNavbar();
         if (!eventId) {
           document.getElementById("loading").textContent = "Event not found.";
           return;
         }
         await fetchEvent();
       };
+
+      function updateNavbar() {
+        const navLinks = document.getElementById("navLinks");
+        let html = `<a href="/index.html" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>`;
+        
+        if (user) {
+          html += `<a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>`;
+          if (user.role === "admin") {
+            html += `<a href="/admin-dashboard.html" class="text-gray-600 hover:text-indigo-600 font-medium">Dashboard</a>`;
+          } else {
+            html += `<a href="/my-bookings.html" class="text-gray-600 hover:text-indigo-600 font-medium">My Bookings</a>`;
+          }
+          html += `<button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-white font-medium ml-2">Logout</button>`;
+        } else {
+          html += `
+            <a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>
+            <a href="/login.html" class="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-4 py-1.5 rounded-lg font-medium">Login</a>
+            <a href="/register.html" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1.5 rounded-lg text-white font-medium">Register</a>
+          `;
+        }
+        navLinks.innerHTML = html;
+      }
 
       async function fetchEvent() {
         try {
@@ -67,59 +87,63 @@
         const content = document.getElementById("eventContent");
 
         content.innerHTML = `
-          <div>
+          <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <!-- BACK BUTTON -->
             <button onclick="window.history.back()" class="text-indigo-600 font-medium mb-6 flex items-center gap-2 hover:underline">
               ← Back to Events
             </button>
 
             <!-- EVENT CARD -->
-            <div class="bg-white rounded-3xl shadow-lg overflow-hidden">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
 
               <!-- TOP BANNER -->
-              <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-10 py-12 text-white">
-                <span class="bg-white text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">
-                  ${event.category}
-                </span>
-                <h2 class="text-4xl font-bold mt-4 mb-2">${event.title}</h2>
-                <p class="text-indigo-200 text-lg">${event.description}</p>
+              <div class="relative px-10 py-20 text-white overflow-hidden bg-gray-900">
+                <img src="${event.image || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600&auto=format&fit=crop&q=80'}" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" alt="${event.title}">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                <div class="relative z-10">
+                  <span class="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                    ${event.category}
+                  </span>
+                  <h2 class="text-5xl font-extrabold mt-5 mb-2 drop-shadow-md">${event.title}</h2>
+                  <p class="text-gray-200 text-xl max-w-2xl drop-shadow-sm">${event.description}</p>
+                </div>
               </div>
 
               <!-- EVENT DETAILS -->
-              <div class="px-10 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="px-10 py-10 grid grid-cols-1 md:grid-cols-2 gap-8 bg-white">
 
-                <div class="space-y-4">
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">📅</span>
+                <div class="space-y-6">
+                  <div class="flex items-center gap-4 group">
+                    <div class="bg-indigo-50 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300">📅</div>
                     <div>
-                      <p class="text-gray-400 text-xs font-medium">Date</p>
-                      <p class="text-gray-800 font-semibold">${event.date}</p>
+                      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-0.5">Event Date</p>
+                      <p class="text-gray-800 font-bold text-lg">${event.date}</p>
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">📍</span>
+                  <div class="flex items-center gap-4 group">
+                    <div class="bg-purple-50 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300">📍</div>
                     <div>
-                      <p class="text-gray-400 text-xs font-medium">Location</p>
-                      <p class="text-gray-800 font-semibold">${event.location}</p>
+                      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-0.5">Location</p>
+                      <p class="text-gray-800 font-bold text-lg">${event.location}</p>
                     </div>
                   </div>
                 </div>
 
-                <div class="space-y-4">
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">🪑</span>
+                <div class="space-y-6">
+                  <div class="flex items-center gap-4 group">
+                    <div class="bg-green-50 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300">🪑</div>
                     <div>
-                      <p class="text-gray-400 text-xs font-medium">Available Seats</p>
-                      <p class="text-gray-800 font-semibold">${event.availableSeats} / ${event.totalSeats}</p>
+                      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-0.5">Availability</p>
+                      <p class="text-gray-800 font-bold text-lg">${event.availableSeats} <span class="text-gray-400 font-medium">/ ${event.totalSeats} seats</span></p>
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">💰</span>
+                  <div class="flex items-center gap-4 group">
+                    <div class="bg-pink-50 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300">💰</div>
                     <div>
-                      <p class="text-gray-400 text-xs font-medium">Price per Ticket</p>
-                      <p class="text-2xl font-bold text-indigo-600">₹${event.price}</p>
+                      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-0.5">Ticket Price</p>
+                      <p class="text-3xl font-extrabold text-indigo-600">₹${event.price}</p>
                     </div>
                   </div>
                 </div>
@@ -127,48 +151,54 @@
               </div>
 
               <!-- BOOKING SECTION -->
-              <div class="px-10 py-8 border-t bg-gray-50">
-                <h3 class="text-xl font-bold text-gray-800 mb-6">Book Your Tickets</h3>
+              <div class="px-10 py-10 border-t bg-gray-50/50">
+                <div class="max-w-md">
+                  <h3 class="text-xl font-bold text-gray-800 mb-2">Book Your Tickets</h3>
+                  <p class="text-gray-400 text-sm mb-6">Select the number of tickets you'd like to purchase.</p>
 
-                <!-- ERROR -->
-                <p id="errorMsg" class="text-red-500 text-sm bg-red-50 px-4 py-2 rounded-lg mb-4 hidden"></p>
-
-                <!-- SUCCESS -->
-                <p id="successMsg" class="text-green-600 text-sm bg-green-50 px-4 py-2 rounded-lg mb-4 hidden"></p>
-
-                <div class="flex items-center gap-4">
-                  <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 bg-white focus-within:border-indigo-500 transition">
-                    <span class="text-gray-400 mr-3">🎟️</span>
-                    <input
-                      type="number"
-                      id="ticketCount"
-                      placeholder="Number of tickets"
-                      min="1"
-                      max="${event.availableSeats}"
-                      class="w-40 text-gray-800 text-sm outline-none bg-transparent"
-                    />
+                  <!-- ERROR / SUCCESS -->
+                  <div id="status">
+                    <p id="errorMsg" class="text-red-500 text-sm bg-red-50 px-4 py-3 rounded-xl mb-4 hidden border border-red-100"></p>
+                    <p id="successMsg" class="text-green-600 text-sm bg-green-50 px-4 py-3 rounded-xl mb-4 hidden border border-green-100"></p>
                   </div>
 
-                  <button
-                    id="bookBtn"
-                    onclick="bookTicket('${event._id}', ${event.price})"
-                    class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition shadow-lg shadow-indigo-200"
-                  >
-                    Book Now →
-                  </button>
+                  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                    <div class="flex items-center border-2 border-gray-200 rounded-2xl px-5 py-4 bg-white focus-within:border-indigo-500 transition duration-300 shadow-sm grow">
+                      <span class="text-gray-400 mr-4 text-xl">🎟️</span>
+                      <input
+                        type="number"
+                        id="ticketCount"
+                        placeholder="Tickets"
+                        min="1"
+                        max="${event.availableSeats}"
+                        class="w-full text-gray-800 font-bold outline-none bg-transparent"
+                      />
+                    </div>
+
+                    <button
+                      id="bookBtn"
+                      onclick="bookTicket('${event._id}', ${event.price})"
+                      class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-4 rounded-2xl transition duration-300 shadow-xl shadow-indigo-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed grow"
+                    >
+                      Book Now →
+                    </button>
+                  </div>
+
+                  <div class="mt-6 p-4 rounded-2xl bg-indigo-50 flex justify-between items-center">
+                    <span class="text-indigo-600 font-bold">Total Amount</span>
+                    <span class="text-2xl font-black text-indigo-600">₹<span id="totalPrice">0</span></span>
+                  </div>
                 </div>
-
-                <p class="text-gray-400 text-sm mt-3">Total: ₹<span id="totalPrice">0</span></p>
-
               </div>
             </div>
           </div>
         `;
 
         // ticket count change hone pe total price update karo
-        document.getElementById("ticketCount").addEventListener("input", (e) => {
+        const input = document.getElementById("ticketCount");
+        input.addEventListener("input", (e) => {
           const count = e.target.value;
-          document.getElementById("totalPrice").textContent = count * event.price;
+          document.getElementById("totalPrice").textContent = count ? count * event.price : 0;
         });
       }
 
@@ -189,12 +219,12 @@
         }
 
         if (!ticketCount || ticketCount < 1) {
-          errorMsg.textContent = "Please enter number of tickets.";
+          errorMsg.textContent = "Please enter valid number of tickets.";
           errorMsg.classList.remove("hidden");
           return;
         }
 
-        bookBtn.textContent = "Booking...";
+        bookBtn.textContent = "Processing...";
         bookBtn.disabled = true;
 
         try {
@@ -202,7 +232,7 @@
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              userId: user.id,
+              userId: user.id || user._id,
               eventId: eventId,
               ticketsBooked: parseInt(ticketCount),
             }),
@@ -218,15 +248,15 @@
             return;
           }
 
-          successMsg.textContent = "Tickets booked successfully! Redirecting to my bookings...";
+          successMsg.textContent = "Tickets booked successfully! Redirecting...";
           successMsg.classList.remove("hidden");
 
           setTimeout(() => {
             window.location.href = "/my-bookings.html";
-          }, 2000);
+          }, 1500);
 
         } catch (error) {
-          errorMsg.textContent = "Something went wrong. Please try again.";
+          errorMsg.textContent = "Booking failed. Please check your connection.";
           errorMsg.classList.remove("hidden");
           bookBtn.textContent = "Book Now →";
           bookBtn.disabled = false;

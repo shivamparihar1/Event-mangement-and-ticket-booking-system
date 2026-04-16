@@ -34,6 +34,10 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+      default: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop&q=60",
+    },
     createdBy: {
       type: String,
       default: "admin",

@@ -6,16 +6,29 @@
     <title>EventSphere</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
-  <body class="bg-white text-gray-900">
+  <body class="bg-white text-gray-900 overflow-hidden" id="mainBody">
+
+    <!-- SPLASH SCREEN / LOGO PAGE -->
+    <div id="splashScreen" class="fixed inset-0 z-[9999] bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 flex flex-col items-center justify-center transition-opacity duration-1000 ease-in-out">
+      <div class="text-center animate-pulse">
+        <div class="text-7xl mb-6">🎟️</div>
+        <h1 class="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200 drop-shadow-lg tracking-tight mb-4">
+          EventSphere
+        </h1>
+        <p class="text-indigo-200 text-xl font-medium tracking-wide">Connecting You to Experiences</p>
+      </div>
+
+      <!-- Loading spinner -->
+      <div class="absolute bottom-20 flex justify-center items-center">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-pink-400"></div>
+      </div>
+    </div>
 
     <!-- NAVBAR -->
     <nav class="flex items-center justify-between px-10 py-4 bg-white shadow-md sticky top-0 z-50">
-      <h1 class="text-2xl font-bold text-indigo-600">🎟️ EventSphere</h1>
-      <div class="flex gap-4 items-center">
-        <a href="/index.html" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
-        <a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>
-        <a href="/login.html" class="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-4 py-1.5 rounded-lg font-medium">Login</a>
-        <a href="/register.html" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1.5 rounded-lg text-white font-medium">Register</a>
+      <h1 class="text-2xl font-extrabold">🎟️ <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-500">EventSphere</span></h1>
+      <div id="navLinks" class="flex gap-4 items-center">
+        <!-- JS will populate this -->
       </div>
     </nav>
 
@@ -57,8 +70,35 @@
       </div>
     </section>
 
+    <!-- ABOUT US SECTION -->
+    <section class="max-w-7xl mx-auto px-10 py-24 flex flex-col lg:flex-row items-center gap-16">
+      <div class="lg:w-1/2">
+        <div class="relative">
+          <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&auto=format&fit=crop&q=80" class="rounded-3xl shadow-xl w-full object-cover h-96" alt="Event Audience">
+          <div class="absolute -bottom-6 -right-6 bg-white p-6 rounded-3xl shadow-xl hidden md:block">
+            <p class="text-4xl font-extrabold text-indigo-600 mb-1">4.9/5</p>
+            <p class="text-gray-500 font-medium">Platform Rating</p>
+            <p class="text-yellow-400 text-xl tracking-widest mt-1">★★★★★</p>
+          </div>
+        </div>
+      </div>
+      <div class="lg:w-1/2">
+        <span class="text-indigo-600 font-bold uppercase tracking-wider text-sm mb-4 block">About EventSphere</span>
+        <h3 class="text-4xl font-bold text-gray-900 mb-6 leading-tight">We bring the best <br>events closer to you.</h3>
+        <p class="text-gray-600 text-lg mb-6 leading-relaxed">
+          EventSphere is India's leading event discovery and ticketing platform. Since our inception, we have been bridging the gap between organizers and attendees by making booking simpler, faster, and more reliable. 
+        </p>
+        <p class="text-gray-600 text-lg mb-8 leading-relaxed">
+          Whether you're looking for an underground indie music gig, a professional tech conference, or a massive cultural festival, EventSphere ensures you never miss out on the experiences that matter most to you.
+        </p>
+        <div class="flex items-center gap-4 border-l-4 border-indigo-600 pl-6 py-2">
+          <p class="text-gray-800 font-semibold italic">"The easiest way to explore and book events in the city. Highly recommended!"</p>
+        </div>
+      </div>
+    </section>
+
     <!-- FEATURES SECTION -->
-    <section class="px-10 py-20 bg-white">
+    <section class="px-10 py-20 bg-gray-50">
       <h3 class="text-4xl font-bold text-center text-gray-900 mb-4">Why Choose EventSphere?</h3>
       <p class="text-center text-gray-500 mb-14 text-lg">Everything you need to discover and book events effortlessly.</p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -84,7 +124,7 @@
       </div>
     </section>
 
-    <!-- CATEGORIES SECTION -->
+    <!-- CATEGORY SECTION -->
     <section class="px-10 py-20 bg-indigo-50">
       <h3 class="text-4xl font-bold text-center text-gray-900 mb-14">Browse by Category</h3>
       <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
@@ -94,6 +134,53 @@
         <span class="bg-white border border-indigo-200 text-indigo-600 px-6 py-3 rounded-full font-medium shadow-sm hover:bg-indigo-600 hover:text-white cursor-pointer transition">🎓 Workshop</span>
         <span class="bg-white border border-indigo-200 text-indigo-600 px-6 py-3 rounded-full font-medium shadow-sm hover:bg-indigo-600 hover:text-white cursor-pointer transition">🎤 Seminar</span>
         <span class="bg-white border border-indigo-200 text-indigo-600 px-6 py-3 rounded-full font-medium shadow-sm hover:bg-indigo-600 hover:text-white cursor-pointer transition">🎵 Music</span>
+        <span class="bg-white border border-indigo-200 text-indigo-600 px-6 py-3 rounded-full font-medium shadow-sm hover:bg-indigo-600 hover:text-white cursor-pointer transition">💼 Business</span>
+        <span class="bg-white border border-indigo-200 text-indigo-600 px-6 py-3 rounded-full font-medium shadow-sm hover:bg-indigo-600 hover:text-white cursor-pointer transition">🧘 Health</span>
+        <span class="bg-white border border-indigo-200 text-indigo-600 px-6 py-3 rounded-full font-medium shadow-sm hover:bg-indigo-600 hover:text-white cursor-pointer transition">🍕 Food</span>
+      </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="max-w-4xl mx-auto px-10 py-24">
+      <div class="text-center mb-16">
+        <span class="text-indigo-600 font-bold uppercase tracking-wider text-sm mb-4 block">Help Center</span>
+        <h3 class="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h3>
+        <p class="text-gray-500 text-lg mb-8">Got questions? We've got answers.</p>
+        
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <button onclick="toggleChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full font-bold transition shadow-lg flex items-center justify-center gap-2">
+            ✨ Chat with AI Assistant
+          </button>
+          <a href="mailto:support@eventsphere.com" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-3 rounded-full font-bold transition flex items-center justify-center gap-2">
+            📧 Contact Human Support
+          </a>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <!-- FAQ Item 1 -->
+        <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm">
+          <h4 class="text-lg font-bold text-gray-900 mb-2">How do I book tickets on EventSphere?</h4>
+          <p class="text-gray-600">Simply create a free account, browse our events page, select your preferred event, and choose the number of tickets. Click "Book Now" to confirm your registration instantly.</p>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm">
+          <h4 class="text-lg font-bold text-gray-900 mb-2">Can I cancel my booking later?</h4>
+          <p class="text-gray-600">Yes! You can cancel your booking anytime from the "My Bookings" page. Your seats will instantly be made available for others.</p>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm">
+          <h4 class="text-lg font-bold text-gray-900 mb-2">How do I get my tickets?</h4>
+          <p class="text-gray-600">Once your booking is confirmed, your digital ticket is safely stored in the "My Bookings" section. You do not need to print it; simply show it on your phone at the venue.</p>
+        </div>
+
+        <!-- FAQ Item 4 -->
+        <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm">
+          <h4 class="text-lg font-bold text-gray-900 mb-2">Are there any hidden charges?</h4>
+          <p class="text-gray-600">No, absolute transparency is our priority. The price you see on the event details page is the final price you pay.</p>
+        </div>
       </div>
     </section>
 
@@ -101,16 +188,215 @@
     <section class="px-10 py-24 bg-indigo-600 text-center">
       <h3 class="text-4xl font-bold text-white mb-4">Ready to Book Your Next Event?</h3>
       <p class="text-indigo-200 text-lg mb-10">Join thousands of users who book events through EventSphere every day.</p>
-      <a href="/register.html" class="bg-white text-indigo-600 hover:bg-indigo-50 px-10 py-4 rounded-lg font-bold text-lg shadow-lg">
+      <a href="/register.html" class="inline-block bg-white text-indigo-600 hover:bg-indigo-50 px-10 py-4 rounded-lg font-bold text-lg shadow-lg">
         Create Free Account →
       </a>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="text-center py-8 text-gray-400 bg-gray-900">
-      <p class="text-white font-semibold text-lg mb-2">🎟️ EventSphere</p>
-      <p>© 2026 EventSphere. All rights reserved.</p>
+    <!-- EXTENDED FOOTER -->
+    <footer class="bg-gray-900 text-gray-300 pt-20 pb-10 border-t border-gray-800 rounded-t-3xl shadow-2xl relative z-10 w-full mt-24">
+      <div class="max-w-7xl mx-auto px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <!-- Brand & About -->
+        <div>
+          <h4 class="text-2xl font-extrabold text-white mb-4 flex items-center">🎟️ <span class="ml-2">EventSphere</span></h4>
+          <p class="text-gray-400 mb-6 leading-relaxed text-sm">India's premium event discovery platform. Book tickets for the best technical, cultural, and sports events happening around you.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition text-white shadow">X</a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition text-white shadow">in</a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition text-white shadow">FB</a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="text-lg font-bold text-white mb-4">Quick Links</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="/index.html" class="hover:text-indigo-400 transition">About Us</a></li>
+            <li><a href="/events.html" class="hover:text-indigo-400 transition">Browse Events</a></li>
+            <li><a href="#" class="hover:text-indigo-400 transition">Help Center & FAQ</a></li>
+            <li><a href="#" class="hover:text-indigo-400 transition">Terms & Privacy</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Us -->
+        <div>
+          <h4 class="text-lg font-bold text-white mb-4">Contact Us</h4>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-start gap-3">
+              <span class="text-indigo-400">📍</span>
+              <p>123 Innovation Drive,<br>Tech Park, Mumbai 400001</p>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-indigo-400">📞</span>
+              <p>+91 98765 43210</p>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-indigo-400">✉️</span>
+              <a href="mailto:support@eventsphere.com" class="hover:text-white transition">support@eventsphere.com</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div>
+          <h4 class="text-lg font-bold text-white mb-4">Newsletter</h4>
+          <p class="text-gray-400 mb-4 text-sm">Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
+          <form class="flex flex-col gap-3" onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
+            <input type="email" placeholder="Enter your email" required class="bg-gray-800 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full text-sm">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition w-full shadow-lg text-sm">Subscribe Now</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="mt-16 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm px-10">
+        <p>© 2026 EventSphere. All rights reserved.</p>
+      </div>
     </footer>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      window.onload = () => {
+        // Splash Screen Logic
+        setTimeout(() => {
+          const splash = document.getElementById("splashScreen");
+          splash.style.opacity = "0";
+          setTimeout(() => {
+            splash.style.display = "none";
+            document.getElementById("mainBody").classList.remove("overflow-hidden");
+          }, 1000); // 1 second for the fade out transition
+        }, 2000); // Show splash for 2 seconds
+
+        updateNavbar();
+      };
+
+      function updateNavbar() {
+        const navLinks = document.getElementById("navLinks");
+        let html = `<a href="/index.html" class="text-indigo-600 font-semibold">Home</a>`;
+        
+        if (user) {
+          html += `<a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>`;
+          if (user.role === "admin") {
+            html += `<a href="/admin-dashboard.html" class="text-gray-600 hover:text-indigo-600 font-medium">Dashboard</a>`;
+          } else {
+            html += `<a href="/my-bookings.html" class="text-gray-600 hover:text-indigo-600 font-medium">My Bookings</a>`;
+          }
+          html += `<button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-white font-medium ml-2">Logout</button>`;
+        } else {
+          html += `
+            <a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>
+            <a href="/login.html" class="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-4 py-1.5 rounded-lg font-medium">Login</a>
+            <a href="/register.html" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1.5 rounded-lg text-white font-medium">Register</a>
+          `;
+        }
+        navLinks.innerHTML = html;
+      }
+
+      function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+      }
+
+      // AI Chatbot Logic
+      function toggleChat() {
+        const chatWindow = document.getElementById("aiChatWindow");
+        chatWindow.classList.toggle("hidden");
+        chatWindow.classList.toggle("flex");
+      }
+
+      async function sendChatMessage() {
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+        if (!message) return;
+
+        const chatBody = document.getElementById("chatBody");
+        
+        // User message
+        chatBody.innerHTML += `<div class="bg-indigo-100 text-indigo-900 p-3 rounded-xl max-w-[80%] self-end mb-3 ml-auto text-sm">${message}</div>`;
+        input.value = "";
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Loading Animation (Bouncing Dots)
+        const loadingId = "load-" + Date.now();
+        chatBody.innerHTML += `
+          <div id="${loadingId}" class="bg-gray-100 text-gray-500 p-3 rounded-xl max-w-[80%] self-start mb-3 text-sm flex gap-1 items-center">
+            Thinking <span class="flex gap-0.5 ml-1"><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div></span>
+          </div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        try {
+          const response = await fetch("http://localhost:5000/api/ai/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
+          });
+
+          const data = await response.json();
+          document.getElementById(loadingId).remove();
+
+          let reply = data.reply.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+          
+          const msgContainer = document.createElement("div");
+          msgContainer.className = "bg-gray-100 text-gray-800 p-3 rounded-xl max-w-[90%] self-start mb-3 text-sm leading-relaxed";
+          chatBody.appendChild(msgContainer);
+          
+          // Typewriter Effect
+          let i = 0;
+          msgContainer.innerHTML = "";
+          const speed = 15; // ms per char
+          
+          // Since there is HTML, simple char-by-char will break tags. 
+          // So we dump the HTML instantly and just fade it in, OR split by words.
+          // Fading in with a smooth slide is often cleaner and feels very "alive".
+          msgContainer.innerHTML = reply;
+          msgContainer.style.opacity = 0;
+          msgContainer.style.transform = "translateY(10px)";
+          msgContainer.style.transition = "all 0.4s ease-out";
+          
+          setTimeout(() => {
+            msgContainer.style.opacity = 1;
+            msgContainer.style.transform = "translateY(0)";
+            chatBody.scrollTop = chatBody.scrollHeight;
+          }, 50);
+
+        } catch (error) {
+          document.getElementById(loadingId).remove();
+          chatBody.innerHTML += `<div class="bg-red-50 text-red-600 p-3 rounded-xl max-w-[80%] self-start mb-3 text-sm">Connection error!</div>`;
+        }
+      }
+    </script>
+
+    <!-- AI CHATBOT WIDGET -->
+    <div class="fixed bottom-6 right-6 z-[100]">
+      <!-- Chat Window -->
+      <div id="aiChatWindow" class="hidden flex-col w-80 h-96 bg-white rounded-2xl shadow-2xl border border-gray-100 mb-4 overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 flex justify-between items-center text-white">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">✨</span>
+            <h4 class="font-bold">EventSphere AI</h4>
+          </div>
+          <button onclick="toggleChat()" class="text-white hover:text-gray-200 text-lg">&times;</button>
+        </div>
+        <!-- Body -->
+        <div id="chatBody" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
+          <div class="bg-gray-100 text-gray-800 p-3 rounded-xl max-w-[80%] self-start mb-3 text-sm leading-relaxed">
+            Hi! I am your AI assistant. Ask me to find events for you! For example: <strong>"Find tech events under Rs. 1000"</strong>
+          </div>
+        </div>
+        <!-- Input -->
+        <div class="p-3 bg-white border-t border-gray-100 flex gap-2">
+          <input type="text" id="chatInput" placeholder="Ask something..." class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500 transition" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+          <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg px-4 py-2 transition">→</button>
+        </div>
+      </div>
+      <!-- Chat Button with Alive Pulse -->
+      <button onclick="toggleChat()" class="float-right bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl transition duration-300 animate-bounce cursor-pointer relative">
+        <span class="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-50 animate-ping"></span>
+        <span class="relative">✨</span>
+      </button>
+    </div>
 
   </body>
 </html>

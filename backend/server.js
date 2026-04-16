@@ -13,6 +13,7 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
 app.use("/api/bookings", require("./routes/bookingRoutes"));
+app.use("/api/ai", require("./routes/aiRoutes"));
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");
