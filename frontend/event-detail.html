@@ -4,41 +4,134 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event Detail | EventSphere</title>
-    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --onyx-deep: #050505;
+        --onyx-surface: #0a0a0a;
+        --mercury: #e0e0e0;
+        --phosphor-blue: #00f2ff;
+        --viscous-ease: cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background-color: var(--onyx-deep);
+        color: var(--mercury);
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      /* ── FLUID BACKGROUND ── */
+      .liquid-bg { position: fixed; inset: 0; z-index: -1; filter: blur(80px); opacity: 0.6; pointer-events: none; overflow: hidden; }
+      .blob { position: absolute; background: linear-gradient(45deg, #1a1a1a, #000); border-radius: 50%; animation: drift 20s infinite alternate var(--viscous-ease); }
+      @keyframes drift { from { transform: translate(-10%, -10%) scale(1); } to { transform: translate(20%, 20%) scale(1.2); } }
+
+      /* ── NAVBAR (Dark) ── */
+      .events-nav {
+        display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent); backdrop-filter: blur(4px);
+      }
+      .nav-logo { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.2rem; color: #fff; text-decoration: none; letter-spacing: 2px; }
+      .nav-links { display: flex; gap: 30px; }
+      .nav-link { color: var(--mercury); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s ease; }
+      .nav-link:hover { color: var(--phosphor-blue); }
+      .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.2); color: var(--mercury); padding: 8px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
+      .logout-btn:hover { border-color: #ff4444; color: #ff4444; }
+
+      /* ── CONTENT ── */
+      .detail-container { max-width: 1200px; margin: 0 auto; padding: 140px 40px 80px 40px; position: relative; z-index: 5; }
+      .back-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 10px 20px; text-transform: uppercase; transition: all 0.3s ease; cursor: pointer; display: inline-block; margin-bottom: 40px; text-decoration: none;}
+      .back-btn:hover { border-color: var(--phosphor-blue); color: var(--phosphor-blue); }
+
+      .event-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; opacity: 0; animation: slideIn 1s forwards ease; }
+      @keyframes slideIn { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(40px); } }
+
+      .showcase-visual { width: 100%; aspect-ratio: 4/5; background: #111; overflow: hidden; position: relative; border-radius: 2px; }
+      .showcase-visual img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(0.7); }
+      
+      .showcase-info { display: flex; flex-direction: column; justify-content: center; }
+      .event-cat { font-family: 'JetBrains Mono', monospace; color: var(--phosphor-blue); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 15px; }
+      .event-title { font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 900; line-height: 0.9; letter-spacing: -2px; color: #fff; margin-bottom: 25px; }
+      .event-desc { font-size: 1rem; color: #888; line-height: 1.6; margin-bottom: 40px; max-width: 90%; }
+      
+      .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px; }
+      .spec-block .label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 5px; }
+      .spec-block .value { font-size: 1.2rem; font-weight: 600; color: #e0e0e0; }
+
+      /* ── TERMINAL UI FORM ── */
+      .booking-terminal { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); padding: 30px; }
+      .terminal-header { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #888; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between;}
+      
+      .input-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+      .qty-input { background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: 'JetBrains Mono', inset; font-size: 2rem; width: 80px; text-align: center; outline: none; transition: border-color 0.3s;}
+      .qty-input:focus { border-color: var(--phosphor-blue); }
+      .total-amount { font-size: 2rem; font-weight: 900; color: #fff; }
+
+      .purchase-btn { width: 100%; background: var(--phosphor-blue); color: #000; border: none; padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+      .purchase-btn:hover { box-shadow: 0 0 30px rgba(0,242,255,0.4); transform: translateY(-2px); }
+      .purchase-btn:active { transform: translateY(0); }
+      .purchase-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: translateY(0); box-shadow: none;}
+
+      .system-msg { margin-top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; display: none; }
+      .system-msg.error { color: #ff4444; display: block; }
+      .system-msg.success { color: var(--phosphor-blue); display: block; }
+
+      @media (max-width: 900px) {
+        .event-showcase { grid-template-columns: 1fr; }
+        .showcase-visual { aspect-ratio: 16/9; }
+      }
+    </style>
   </head>
-  <body class="bg-gray-50 min-h-screen">
+  <body>
 
-    <!-- NAVBAR -->
-    <nav class="flex items-center justify-between px-10 py-4 bg-white shadow-md sticky top-0 z-50">
-      <h1 class="text-2xl font-bold text-indigo-600">🎟️ EventSphere</h1>
-      <div class="flex gap-4 items-center">
-        <a href="/index.html" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
-        <a href="/events.html" class="text-gray-600 hover:text-indigo-600 font-medium">Events</a>
-        <a href="/my-bookings.html" class="text-gray-600 hover:text-indigo-600 font-medium">My Bookings</a>
-        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-white font-medium">Logout</button>
-      </div>
-    </nav>
-
-    <!-- MAIN CONTENT -->
-    <div id="eventContent" class="max-w-4xl mx-auto px-6 py-12">
-      <p id="loading" class="text-center text-indigo-500 text-lg">Loading event...</p>
+    <!-- Fluid Background -->
+    <div class="liquid-bg">
+      <div id="blob1" class="blob" style="width: 600px; height: 600px; top: -100px; left: -100px; background: linear-gradient(45deg, #111, #001f3f);"></div>
+      <div id="blob2" class="blob" style="width: 500px; height: 500px; bottom: 0; right: 0; background: linear-gradient(45deg, #0a0a0a, #151515);"></div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="text-center py-6 text-gray-400 bg-white border-t mt-10">
-      © 2026 EventSphere. All rights reserved.
-    </footer>
+    <!-- Navigation -->
+    <nav class="events-nav">
+      <a href="/index.html" class="nav-logo">EVENT<span style="color:var(--phosphor-blue)">SPHERE</span></a>
+      <div class="nav-links">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/events.html" class="nav-link" style="color:var(--phosphor-blue)">Events</a>
+        <a href="/my-bookings.html" class="nav-link">Bookings</a>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <!-- CONTENT -->
+    <main class="detail-container">
+      <a href="/events.html" class="back-btn">&lt; ABORT // RETURN</a>
+      
+      <div id="loading" style="font-family:'JetBrains Mono', monospace; color:var(--phosphor-blue); text-align:center; padding: 100px;">ESTABLISHING CONNECTION...</div>
+      
+      <div id="eventContent" class="event-showcase" style="display:none;">
+        <!-- Injected via JS -->
+      </div>
+    </main>
 
     <script>
-      // URL se event id lo
       const params = new URLSearchParams(window.location.search);
       const eventId = params.get("id");
-
       const user = JSON.parse(localStorage.getItem("user"));
+      let currentEventPrice = 0;
+
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        const b1 = document.getElementById('blob1');
+        const b2 = document.getElementById('blob2');
+        if(b1) b1.style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+        if(b2) b2.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
+      });
 
       window.onload = async () => {
         if (!eventId) {
-          document.getElementById("loading").textContent = "Event not found.";
+          document.getElementById("loading").textContent = "ERROR: 404 DATA CORRUPTED.";
           return;
         }
         await fetchEvent();
@@ -46,198 +139,132 @@
 
       async function fetchEvent() {
         try {
-          const response = await fetch(`http://localhost:5000/api/events/${eventId}`);
+          const response = await fetch(`http://localhost:5001/api/events/${eventId}`);
           const data = await response.json();
-
-          document.getElementById("loading").classList.add("hidden");
+          document.getElementById("loading").style.display = "none";
 
           if (!response.ok) {
-            document.getElementById("eventContent").innerHTML = `<p class="text-center text-red-500">Event not found.</p>`;
+            const err = document.createElement("div");
+            err.innerHTML = `<p style="color:#ff4444; font-family:'JetBrains Mono'; text-align:center;">// SECURITY CLEARANCE DENIED / EVENT MISSING.</p>`;
+            document.querySelector(".detail-container").appendChild(err);
             return;
           }
 
           renderEvent(data.event);
-
         } catch (error) {
-          document.getElementById("loading").textContent = "Failed to load event.";
+          document.getElementById("loading").textContent = "CRITICAL SERVER ANOMALY.";
         }
       }
 
       function renderEvent(event) {
+        currentEventPrice = event.price;
         const content = document.getElementById("eventContent");
+        
+        const defImages = {
+            'Technical': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&q=80',
+            'Cultural': 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1000&q=80',
+            'Sports': 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1000&q=80'
+        };
+        const imgUrl = defImages[event.category] || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1000&q=80';
 
+        content.style.display = "grid";
         content.innerHTML = `
-          <div>
-            <!-- BACK BUTTON -->
-            <button onclick="window.history.back()" class="text-indigo-600 font-medium mb-6 flex items-center gap-2 hover:underline">
-              ← Back to Events
-            </button>
+          <div class="showcase-visual">
+            <span style="position:absolute; top:20px; left:20px; color:#fff; font-family:'JetBrains Mono'; font-size:0.6rem; letter-spacing:0.2em; z-index:10; background:rgba(0,0,0,0.5); padding:4px 8px;">LIVE FEED</span>
+            <img src="${imgUrl}" alt="Event" />
+          </div>
+          
+          <div class="showcase-info">
+            <span class="event-cat">// ${event.category}</span>
+            <h1 class="event-title">${event.title}</h1>
+            <p class="event-desc">${event.description}</p>
+            
+            <div class="specs-grid">
+              <div class="spec-block"><span class="label">DATE</span><span class="value">${new Date(event.date).toLocaleDateString()}</span></div>
+              <div class="spec-block"><span class="label">LOCATION</span><span class="value">${event.location}</span></div>
+              <div class="spec-block"><span class="label">CAPACITY STATUS</span><span class="value">${event.availableSeats}/${event.totalSeats} LIVE</span></div>
+              <div class="spec-block"><span class="label">COST/PASS</span><span class="value">₹${event.price}</span></div>
+            </div>
 
-            <!-- EVENT CARD -->
-            <div class="bg-white rounded-3xl shadow-lg overflow-hidden">
-
-              <!-- TOP BANNER -->
-              <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-10 py-12 text-white">
-                <span class="bg-white text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">
-                  ${event.category}
-                </span>
-                <h2 class="text-4xl font-bold mt-4 mb-2">${event.title}</h2>
-                <p class="text-indigo-200 text-lg">${event.description}</p>
+            <div class="booking-terminal">
+              <div class="terminal-header">
+                <span>SECURE_TRANSACTION_PROTOCOL</span>
+                <span>STATUS: OPERATIONAL</span>
               </div>
-
-              <!-- EVENT DETAILS -->
-              <div class="px-10 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <div class="space-y-4">
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">📅</span>
-                    <div>
-                      <p class="text-gray-400 text-xs font-medium">Date</p>
-                      <p class="text-gray-800 font-semibold">${event.date}</p>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">📍</span>
-                    <div>
-                      <p class="text-gray-400 text-xs font-medium">Location</p>
-                      <p class="text-gray-800 font-semibold">${event.location}</p>
-                    </div>
-                  </div>
+              <div class="input-row">
+                <div>
+                  <span style="font-family:'JetBrains Mono'; font-size:0.65rem; color:#888; display:block; margin-bottom:8px;">QTY //</span>
+                  <input type="number" id="ticketCount" class="qty-input" value="1" min="1" max="${event.availableSeats}" oninput="updateTotal()"/>
                 </div>
-
-                <div class="space-y-4">
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">🪑</span>
-                    <div>
-                      <p class="text-gray-400 text-xs font-medium">Available Seats</p>
-                      <p class="text-gray-800 font-semibold">${event.availableSeats} / ${event.totalSeats}</p>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-3 bg-gray-50 rounded-xl px-5 py-4">
-                    <span class="text-2xl">💰</span>
-                    <div>
-                      <p class="text-gray-400 text-xs font-medium">Price per Ticket</p>
-                      <p class="text-2xl font-bold text-indigo-600">₹${event.price}</p>
-                    </div>
-                  </div>
+                <div style="text-align:right;">
+                  <span style="font-family:'JetBrains Mono'; font-size:0.65rem; color:#888; display:block; margin-bottom:8px;">TOTAL //</span>
+                  <div class="total-amount" id="totalPrice">₹${event.price}</div>
                 </div>
-
               </div>
-
-              <!-- BOOKING SECTION -->
-              <div class="px-10 py-8 border-t bg-gray-50">
-                <h3 class="text-xl font-bold text-gray-800 mb-6">Book Your Tickets</h3>
-
-                <!-- ERROR -->
-                <p id="errorMsg" class="text-red-500 text-sm bg-red-50 px-4 py-2 rounded-lg mb-4 hidden"></p>
-
-                <!-- SUCCESS -->
-                <p id="successMsg" class="text-green-600 text-sm bg-green-50 px-4 py-2 rounded-lg mb-4 hidden"></p>
-
-                <div class="flex items-center gap-4">
-                  <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 bg-white focus-within:border-indigo-500 transition">
-                    <span class="text-gray-400 mr-3">🎟️</span>
-                    <input
-                      type="number"
-                      id="ticketCount"
-                      placeholder="Number of tickets"
-                      min="1"
-                      max="${event.availableSeats}"
-                      class="w-40 text-gray-800 text-sm outline-none bg-transparent"
-                    />
-                  </div>
-
-                  <button
-                    id="bookBtn"
-                    onclick="bookTicket('${event._id}', ${event.price})"
-                    class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition shadow-lg shadow-indigo-200"
-                  >
-                    Book Now →
-                  </button>
-                </div>
-
-                <p class="text-gray-400 text-sm mt-3">Total: ₹<span id="totalPrice">0</span></p>
-
-              </div>
+              <button class="purchase-btn" id="bookBtn" onclick="bookTicket('${event._id}')">INITIALIZE PURCHASE</button>
+              <div id="sysMsg" class="system-msg"></div>
             </div>
           </div>
         `;
-
-        // ticket count change hone pe total price update karo
-        document.getElementById("ticketCount").addEventListener("input", (e) => {
-          const count = e.target.value;
-          document.getElementById("totalPrice").textContent = count * event.price;
-        });
       }
 
-      async function bookTicket(eventId, price) {
-        const errorMsg = document.getElementById("errorMsg");
-        const successMsg = document.getElementById("successMsg");
+      function updateTotal() {
+        const count = parseInt(document.getElementById("ticketCount").value) || 0;
+        document.getElementById("totalPrice").textContent = "₹" + (count * currentEventPrice);
+      }
+
+      async function bookTicket(eventId) {
+        const sysMsg = document.getElementById("sysMsg");
         const bookBtn = document.getElementById("bookBtn");
         const ticketCount = document.getElementById("ticketCount").value;
 
-        errorMsg.classList.add("hidden");
-        successMsg.classList.add("hidden");
+        sysMsg.className = "system-msg";
+        sysMsg.textContent = "";
 
         if (!user) {
-          errorMsg.textContent = "Please login first to book tickets.";
-          errorMsg.classList.remove("hidden");
+          sysMsg.textContent = "AUTH_FAILED: LOGIN REQUIRED";
+          sysMsg.classList.add("error");
           setTimeout(() => { window.location.href = "/login.html"; }, 1500);
           return;
         }
 
         if (!ticketCount || ticketCount < 1) {
-          errorMsg.textContent = "Please enter number of tickets.";
-          errorMsg.classList.remove("hidden");
+          sysMsg.textContent = "SYNTAX_ERROR: INVALID QTY";
+          sysMsg.classList.add("error");
           return;
         }
 
-        bookBtn.textContent = "Booking...";
+        bookBtn.textContent = "PROCESSING...";
         bookBtn.disabled = true;
 
         try {
-          const response = await fetch("http://localhost:5000/api/bookings/book", {
+          const response = await fetch("http://localhost:5001/api/bookings/book", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId: user.id,
-              eventId: eventId,
-              ticketsBooked: parseInt(ticketCount),
-            }),
+            body: JSON.stringify({ userId: user.id, eventId: eventId, ticketsBooked: parseInt(ticketCount) }),
           });
-
           const data = await response.json();
 
           if (!response.ok) {
-            errorMsg.textContent = data.message;
-            errorMsg.classList.remove("hidden");
-            bookBtn.textContent = "Book Now →";
+            sysMsg.textContent = "TRANSACTION_DENIED: " + data.message;
+            sysMsg.classList.add("error");
+            bookBtn.textContent = "RETRY PURCHASE";
             bookBtn.disabled = false;
             return;
           }
 
-          successMsg.textContent = "Tickets booked successfully! Redirecting to my bookings...";
-          successMsg.classList.remove("hidden");
-
-          setTimeout(() => {
-            window.location.href = "/my-bookings.html";
-          }, 2000);
-
+          sysMsg.textContent = "TRANSACTION_SUCCESS: REDIRECTING TO LEDGER...";
+          sysMsg.classList.add("success");
+          setTimeout(() => { window.location.href = "/my-bookings.html"; }, 2000);
         } catch (error) {
-          errorMsg.textContent = "Something went wrong. Please try again.";
-          errorMsg.classList.remove("hidden");
-          bookBtn.textContent = "Book Now →";
+          sysMsg.textContent = "NETWORK_ERROR: LINK SEVERED";
+          sysMsg.classList.add("error");
+          bookBtn.textContent = "INITIALIZE PURCHASE";
           bookBtn.disabled = false;
         }
       }
 
-      function logout() {
-        localStorage.removeItem("user");
-        window.location.href = "/login.html";
-      }
+      function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
     </script>
-
   </body>
 </html>

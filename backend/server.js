@@ -14,6 +14,6 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
 app.use("/api/bookings", require("./routes/bookingRoutes"));
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.listen(process.env.PORT || 5001, () => {
+  console.log(`Server running on port ${process.env.PORT || 5001}`);
 });

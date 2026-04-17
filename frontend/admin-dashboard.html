@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | EventSphere</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --onyx-deep: #050505;
+        --onyx-surface: #0a0a0a;
+        --mercury: #e0e0e0;
+        --phosphor-blue: #00f2ff;
+        --viscous-ease: cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background-color: var(--onyx-deep);
+        color: var(--mercury);
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      /* ── FLUID BACKGROUND ── */
+      .liquid-bg { position: fixed; inset: 0; z-index: -1; filter: blur(80px); opacity: 0.6; pointer-events: none; overflow: hidden; }
+      .blob { position: absolute; background: linear-gradient(45deg, #1a1a1a, #000); border-radius: 50%; animation: drift 20s infinite alternate var(--viscous-ease); }
+      @keyframes drift { from { transform: translate(-10%, -10%) scale(1); } to { transform: translate(20%, 20%) scale(1.2); } }
+
+      /* ── NAVBAR (Dark) ── */
+      .events-nav {
+        display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent); backdrop-filter: blur(4px);
+      }
+      .nav-logo { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.2rem; color: #fff; text-decoration: none; letter-spacing: 2px; }
+      .nav-links { display: flex; gap: 30px; }
+      .nav-link { color: var(--mercury); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s ease; }
+      .nav-link:hover { color: var(--phosphor-blue); }
+      .nav-link.active { color: var(--phosphor-blue); }
+      .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.2); color: var(--mercury); padding: 8px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
+      .logout-btn:hover { border-color: #ff4444; color: #ff4444; }
+
+      /* ── CONTENT ── */
+      .admin-container { max-width: 1400px; margin: 0 auto; padding: 120px 40px 80px 40px; position: relative; z-index: 5; }
+      
+      .admin-welcome { font-family: 'JetBrains Mono', monospace; color: var(--phosphor-blue); font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 30px; text-transform: uppercase; }
+      
+      .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; opacity: 0; animation: slideIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+      @keyframes slideIn { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(40px); } }
+
+      /* ── SURFACES ── */
+      .sys-panel { background: rgba(26,26,26,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 4px; backdrop-filter: blur(10px); }
+      .panel-header { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 25px; letter-spacing: -0.5px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+
+      /* ── FORM ── */
+      .input-group { margin-bottom: 20px; }
+      .input-group label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+      .input-group input, .input-group textarea, .input-group select { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px 15px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; border-radius: 2px; transition: border-color 0.3s; }
+      .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--phosphor-blue); }
+      
+      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+      
+      .action-btn { width: 100%; background: var(--phosphor-blue); color: #000; border: none; padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; }
+      .action-btn:hover { box-shadow: 0 0 20px rgba(0,242,255,0.3); transform: translateY(-2px); }
+
+      /* ── EVENTS LIST ── */
+      .event-row { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .event-row:last-child { border-bottom: none; }
+      .er-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+      .er-cat { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--phosphor-blue); border: 1px solid rgba(0,242,255,0.3); padding: 2px 6px; border-radius: 2px; text-transform: uppercase; }
+      .er-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #666; margin-top: 6px; }
+      .er-meta span { color: #aaa; }
+      
+      .del-btn { background: transparent; border: 1px solid rgba(255,68,68,0.3); color: #ff4444; padding: 8px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+      .del-btn:hover { background: rgba(255,68,68,0.1); border-color: #ff4444; }
+
+      .system-msg { margin-top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; display: none; padding: 10px; border-radius: 2px;}
+      .system-msg.error { background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); display: block; }
+      .system-msg.success { background: rgba(0,242,255,0.1); color: var(--phosphor-blue); border: 1px solid rgba(0,242,255,0.3); display: block; }
+
+      @media (max-width: 900px) {
+        .admin-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Fluid Background -->
+    <div class="liquid-bg">
+      <div id="blob1" class="blob" style="width: 500px; height: 500px; top: 0; left: -100px; background: linear-gradient(45deg, #111, #001f3f);"></div>
+      <div id="blob2" class="blob" style="width: 600px; height: 600px; bottom: -100px; right: -100px; background: linear-gradient(45deg, #0a0a0a, #151515);"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="events-nav">
+      <a href="/index.html" class="nav-logo">EVENT<span style="color:var(--phosphor-blue)">SPHERE</span></a>
+      <div class="nav-links">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/admin-dashboard.html" class="nav-link active">Admin_Core</a>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <!-- Content -->
+    <main class="admin-container">
+      <div id="adminName" class="admin-welcome">// ESTABLISHING ADMIN UPLINK...</div>
+      
+      <div class="admin-grid">
+        
+        <!-- CREATE EVENT -->
+        <div class="sys-panel">
+          <h2 class="panel-header">Initialize Node</h2>
+          <form id="createEventForm">
+            <div class="input-group">
+              <label>Node Designation (Title)</label>
+              <input type="text" id="title" required placeholder="Event Name..." />
+            </div>
+            <div class="input-group">
+              <label>Description Parameters</label>
+              <textarea id="description" required rows="3" placeholder="Define the event..."></textarea>
+            </div>
+            <div class="form-row">
+              <div class="input-group">
+                <label>Date Sequence</label>
+                <input type="date" id="date" required style="color-scheme: dark;"/>
+              </div>
+              <div class="input-group">
+                <label>Classification</label>
+                <select id="category">
+                  <option value="Technical" style="color:#000;">Technical</option>
+                  <option value="Cultural" style="color:#000;">Cultural</option>
+                  <option value="Sports" style="color:#000;">Sports</option>
+                  <option value="Workshop" style="color:#000;">Workshop</option>
+                  <option value="Seminar" style="color:#000;">Seminar</option>
+                  <option value="Music" style="color:#000;">Music</option>
+                </select>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Coordinates (Location)</label>
+              <input type="text" id="location" required placeholder="Physical / Virtual Location..." />
+            </div>
+            <div class="form-row">
+              <div class="input-group">
+                <label>Entry Fee (₹)</label>
+                <input type="number" id="price" required min="0" placeholder="0 = Free" />
+              </div>
+              <div class="input-group">
+                <label>Max Capacity</label>
+                <input type="number" id="totalSeats" required min="1" placeholder="Headcount limit" />
+              </div>
+            </div>
+            <div id="formMsg" class="system-msg"></div>
+            <button type="submit" id="submitBtn" class="action-btn">EXECUTE_CREATION</button>
+          </form>
+        </div>
+
+        <!-- MANAGE EVENTS -->
+        <div class="sys-panel">
+          <h2 class="panel-header">Active Nodes Registry</h2>
+          <div id="loading" style="font-family:'JetBrains Mono'; color:#888; font-size:0.8rem;">SYNCING REGISTRY...</div>
+          <div id="noEvents" style="display:none; font-family:'JetBrains Mono'; color:#555; font-size:0.8rem;">// REGISTRY EMPTY.</div>
+          
+          <div id="eventsList">
+            <!-- Events populated via JS -->
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || user.role !== "admin") window.location.href = "/login.html";
+      else document.getElementById("adminName").textContent = `// UPLINK CONFIRMED: COMMANDER ${user.name.toUpperCase()}`;
+
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        const b1 = document.getElementById('blob1');
+        const b2 = document.getElementById('blob2');
+        if(b1) b1.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
+        if(b2) b2.style.transform = `translate(${x * -15}px, ${y * -15}px)`;
+      });
+
+      window.onload = () => fetchEvents();
+
+      async function fetchEvents() {
+        try {
+          const response = await fetch("http://localhost:5001/api/events/all");
+          const data = await response.json();
+          document.getElementById("loading").style.display = "none";
+          if (!response.ok || data.events.length === 0) {
+            document.getElementById("noEvents").style.display = "block";
+            document.getElementById("eventsList").innerHTML = "";
+            return;
+          }
+          renderEvents(data.events);
+        } catch (error) {
+          document.getElementById("loading").textContent = "SYNC_FAILED: NETWORK ERROR";
+        }
+      }
+
+      function renderEvents(events) {
+        const list = document.getElementById("eventsList");
+        list.innerHTML = "";
+        document.getElementById("noEvents").style.display = "none";
+
+        events.forEach(event => {
+          const row = `
+            <div class="event-row">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <h3 class="er-title">${event.title}</h3>
+                  <span class="er-cat">${event.category}</span>
+                </div>
+                <div class="er-meta">
+                  DATE: <span>${new Date(event.date).toLocaleDateString()}</span> | LOC: <span>${event.location}</span>
+                </div>
+                <div class="er-meta">
+                  FEE: <span>₹${event.price}</span> | SEATS: <span>${event.availableSeats}/${event.totalSeats} LIVE</span>
+                </div>
+              </div>
+              <button onclick="deleteEvent('${event._id}')" class="del-btn">TERMINATE</button>
+            </div>
+          `;
+          list.innerHTML += row;
+        });
+      }
+
+      const form = document.getElementById("createEventForm");
+      const formMsg = document.getElementById("formMsg");
+      const submitBtn = document.getElementById("submitBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newEvent = {
+          title: document.getElementById("title").value,
+          description: document.getElementById("description").value,
+          date: document.getElementById("date").value,
+          location: document.getElementById("location").value,
+          category: document.getElementById("category").value,
+          price: document.getElementById("price").value,
+          totalSeats: document.getElementById("totalSeats").value
+        };
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "PROCESSING...";
+        formMsg.className = "system-msg";
+
+        try {
+          const response = await fetch("http://localhost:5001/api/events/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newEvent) });
+          if (response.ok) {
+            formMsg.textContent = "NODE_CREATED: REGISTRY UPDATED";
+            formMsg.classList.add("success");
+            form.reset();
+            fetchEvents();
+          } else {
+            const data = await response.json();
+            formMsg.textContent = "ABORT: " + (data.message || "CREATION FAILED");
+            formMsg.classList.add("error");
+          }
+        } catch (error) {
+          formMsg.textContent = "CRITICAL: SERVER OFFLINE";
+          formMsg.classList.add("error");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "EXECUTE_CREATION";
+        }
+      });
+
+      async function deleteEvent(eventId) {
+        if (!confirm("WARNING: Deleting this node will sever attached booking ledgers. Proceed?")) return;
+        try {
+          const response = await fetch(`http://localhost:5001/api/events/delete/${eventId}`, { method: "DELETE" });
+          if (response.ok) fetchEvents();
+          else alert("TERMINATION FAILED: CHECK PERMISSIONS.");
+        } catch (error) { alert("SERVER ERROR."); }
+      }
+
+      function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
+    </script>
+  </body>
+</html>

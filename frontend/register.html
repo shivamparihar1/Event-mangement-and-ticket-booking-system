@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register | EventSphere</title>
-    <link rel="stylesheet" href="/src/style.css" />
-  </head>
-  <body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content="0;url=/login.html" />
+  <title>Register | EventSphere</title>
+</head>
+<body>
+  <script>
+    // Switch to register tab after arriving at the login page
+    localStorage.setItem('openTab', 'register');
+    window.location.href = '/login.html';
+  </script>
+</body>
+</html>
+
+  <body class="min-h-screen flex items-center justify-center bg-[#f4f4f4]">
 
     <div class="w-full max-w-md mx-4">
 
@@ -14,9 +22,9 @@
       <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
 
         <!-- TOP BANNER -->
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-8 text-center">
+        <div class="bg-gray-900 px-8 py-8 text-center">
           <h1 class="text-3xl font-bold text-white">🎟️ EventSphere</h1>
-          <p class="text-indigo-200 mt-2 text-sm">Join thousands of event lovers today</p>
+          <p class="text-gray-400 mt-2 text-sm">Join thousands of event lovers today</p>
         </div>
 
         <!-- FORM -->
@@ -29,7 +37,7 @@
             <!-- NAME -->
             <div>
               <label class="block text-gray-600 text-sm font-semibold mb-1.5">Full Name</label>
-              <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-indigo-500 transition">
+              <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-gray-900 transition">
                 <span class="text-gray-400 mr-3">👤</span>
                 <input
                   type="text"
@@ -43,7 +51,7 @@
             <!-- EMAIL -->
             <div>
               <label class="block text-gray-600 text-sm font-semibold mb-1.5">Email Address</label>
-              <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-indigo-500 transition">
+              <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-gray-900 transition">
                 <span class="text-gray-400 mr-3">📧</span>
                 <input
                   type="email"
@@ -57,7 +65,7 @@
             <!-- PASSWORD -->
             <div>
               <label class="block text-gray-600 text-sm font-semibold mb-1.5">Password</label>
-              <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-indigo-500 transition">
+              <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-gray-900 transition">
                 <span class="text-gray-400 mr-3">🔒</span>
                 <input
                   type="password"
@@ -72,12 +80,12 @@
             <div>
               <label class="block text-gray-600 text-sm font-semibold mb-1.5">Register As</label>
               <div class="flex gap-3">
-                <label class="flex-1 flex items-center gap-3 border-2 border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:border-indigo-400 transition has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
-                  <input type="radio" name="role" value="user" class="accent-indigo-600" checked />
+                <label class="flex-1 flex items-center gap-3 border-2 border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:border-gray-400 transition has-[:checked]:border-gray-900 has-[:checked]:bg-gray-100">
+                  <input type="radio" name="role" value="user" class="accent-gray-900" checked />
                   <span class="text-gray-700 text-sm font-medium">👤 User</span>
                 </label>
-                <label class="flex-1 flex items-center gap-3 border-2 border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:border-indigo-400 transition has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
-                  <input type="radio" name="role" value="admin" class="accent-indigo-600" />
+                <label class="flex-1 flex items-center gap-3 border-2 border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:border-gray-400 transition has-[:checked]:border-gray-900 has-[:checked]:bg-gray-100">
+                  <input type="radio" name="role" value="admin" class="accent-gray-900" />
                   <span class="text-gray-700 text-sm font-medium">🛠️ Admin</span>
                 </label>
               </div>
@@ -93,7 +101,7 @@
             <button
               type="submit"
               id="submitBtn"
-              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-200 text-sm"
+              class="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-gray-200 text-sm"
             >
               Create Account →
             </button>
@@ -103,7 +111,7 @@
           <!-- LOGIN LINK -->
           <p class="text-center text-gray-400 text-sm mt-6">
             Already have an account?
-            <a href="/login.html" class="text-indigo-600 font-semibold hover:underline">Login here</a>
+            <a href="/login.html" class="text-gray-900 font-semibold hover:underline">Login here</a>
           </p>
 
         </div>
@@ -138,7 +146,7 @@
         submitBtn.disabled = true;
 
         try {
-          const response = await fetch("http://localhost:5000/api/auth/register", {
+          const response = await fetch("http://localhost:5001/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, email, password, role }),

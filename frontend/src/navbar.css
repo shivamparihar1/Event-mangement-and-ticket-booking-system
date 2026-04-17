@@ -1,0 +1,193 @@
+:root {
+  --porcelain-base: #fdfdfd;
+  --porcelain-edge: #ffffff;
+  --porcelain-shadow: rgba(0, 0, 0, 0.04);
+  --fluid-accent: #1a1a1a;
+  --depth-inner: inset 0 2px 4px 0 rgba(255,255,255,1), inset 0 -2px 10px 0 rgba(0,0,0,0.02);
+  --transition-fluid: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* The Aerated Texture Overlay */
+.texture-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  z-index: 9999;
+  filter: contrast(150%) brightness(100%);
+}
+
+/* Navigation Container */
+.nav-wrapper {
+  position: relative;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: reveal 1.2s var(--transition-fluid) forwards;
+}
+
+.porcelain-nav {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--porcelain-base);
+  border-radius: 100px;
+  box-shadow: 
+      0 20px 40px -10px var(--porcelain-shadow),
+      0 10px 20px -5px var(--porcelain-shadow),
+      var(--depth-inner);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  gap: 32px;
+  position: relative;
+  font-family: 'Outfit', sans-serif;
+}
+
+.logo-section {
+  padding-left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-mark {
+  width: 14px;
+  height: 14px;
+  background: var(--fluid-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.03);
+  position: relative;
+}
+
+.logo-mark::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+}
+
+.logo-text {
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fluid-accent);
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 24px;
+  display: block;
+  transition: color 0.4s var(--transition-fluid);
+  position: relative;
+  z-index: 2;
+}
+
+/* Fluid Background Hover Effect */
+.fluid-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 40px;
+  transform: scale(0.85);
+  opacity: 0;
+  transition: all 0.5s var(--transition-fluid);
+  z-index: 1;
+}
+
+.nav-link:hover {
+  color: var(--fluid-accent);
+}
+
+.nav-link:hover + .fluid-bg {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.nav-link.active {
+  color: var(--fluid-accent);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--fluid-accent);
+  border-radius: 50%;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-right: 8px;
+}
+
+.data-stream {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 6px 12px;
+  border-radius: 40px;
+  letter-spacing: -0.02em;
+}
+
+.action-button {
+  background: var(--fluid-accent);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s var(--transition-fluid), box-shadow 0.3s var(--transition-fluid);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.action-button:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.action-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+@keyframes reveal {
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}

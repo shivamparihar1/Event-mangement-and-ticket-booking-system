@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bookings | EventSphere</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --onyx-deep: #050505;
+        --onyx-surface: #0a0a0a;
+        --onyx-fluid: #121212;
+        --mercury: #e0e0e0;
+        --phosphor-blue: #00f2ff;
+        --viscous-ease: cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        background-color: var(--onyx-deep);
+        color: var(--mercury);
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ── FLUID BACKGROUND ── */
+      .liquid-bg {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        filter: blur(80px);
+        opacity: 0.6;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .blob {
+        position: absolute;
+        background: linear-gradient(45deg, #1a1a1a, #000);
+        border-radius: 50%;
+        animation: drift 20s infinite alternate var(--viscous-ease);
+      }
+
+      @keyframes drift {
+        from { transform: translate(-10%, -10%) scale(1); }
+        to { transform: translate(20%, 20%) scale(1.2); }
+      }
+
+      /* ── NAVBAR (Dark) ── */
+      .events-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
+        backdrop-filter: blur(4px);
+      }
+      .nav-logo {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: #fff;
+        text-decoration: none;
+        letter-spacing: 2px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 30px;
+      }
+      .nav-link {
+        color: var(--mercury);
+        text-decoration: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: color 0.3s ease;
+      }
+      .nav-link:hover { color: var(--phosphor-blue); }
+
+      .logout-btn {
+        background: none;
+        border: 1px solid rgba(255,255,255,0.2);
+        color: var(--mercury);
+        padding: 8px 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .logout-btn:hover {
+        border-color: #ff4444;
+        color: #ff4444;
+      }
+
+      /* ── MAIN CONTAINER ── */
+      .bookings-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 140px 40px 80px 40px;
+        position: relative;
+        z-index: 5;
+      }
+
+      .bookings-h1 {
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 900;
+        line-height: 0.9;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+        color: #fff;
+        animation: slideIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+      .bookings-p {
+        font-family: 'JetBrains Mono', monospace;
+        color: #888;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 60px;
+        animation: slideIn 1s 0.2s cubic-bezier(0.23, 1, 0.32, 1) forwards opacity-0;
+      }
+
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── LIST ── */
+      .bookings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        opacity: 0;
+        animation: slideIn 1.2s 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+
+      /* ── BOOKING CARD ── */
+      .booking-card {
+        background: rgba(26, 26, 26, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.4s ease, border-color 0.4s ease;
+      }
+      .booking-card:hover {
+        transform: translateX(10px);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .event-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+      }
+      .status-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        padding: 6px 12px;
+        border-radius: 2px;
+        font-weight: bold;
+      }
+      .status-confirmed {
+        background: rgba(0, 242, 255, 0.1);
+        color: var(--phosphor-blue);
+        border: 1px solid rgba(0, 242, 255, 0.3);
+      }
+      .status-cancelled {
+        background: rgba(255, 68, 68, 0.1);
+        color: #ff4444;
+        border: 1px solid rgba(255, 68, 68, 0.3);
+      }
+
+      .card-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: #888;
+        text-transform: uppercase;
+      }
+      .card-details span { color: #ccc; }
+
+      .card-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-top: 10px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        padding-top: 20px;
+      }
+
+      .total-amount {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #fff;
+      }
+      .total-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 4px;
+      }
+
+      .cancel-btn {
+        background: transparent;
+        border: none;
+        color: #ff4444;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        padding: 8px 0;
+        position: relative;
+      }
+      .cancel-btn::after {
+        content: '';
+        position: absolute;
+        bottom: 4px; left: 0; width: 100%; height: 1px;
+        background: #ff4444;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+      }
+      .cancel-btn:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+
+      /* Utility */
+      .opacity-0 { opacity: 0; }
+      .hidden { display: none !important; }
+
+      @media (min-width: 768px) {
+        .booking-card { flex-direction: row; align-items: center; justify-content: space-between; gap: 40px; }
+        .card-top { flex-direction: column; gap: 4px; }
+        .card-bottom { border-top: none; padding-top: 0; border-left: 1px solid rgba(255,255,255,0.05); padding-left: 40px; flex-direction: column; align-items: flex-end; gap: 10px; }
+      }
+      @media (max-width: 767px) {
+        .bookings-h1 { font-size: 2.5rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Fluid Background -->
+    <div class="liquid-bg">
+      <div id="blob1" class="blob" style="width: 500px; height: 500px; top: 0; right: 0; background: linear-gradient(45deg, #111, #001f3f);"></div>
+      <div id="blob2" class="blob" style="width: 400px; height: 400px; bottom: 0; left: 0; background: linear-gradient(45deg, #0a0a0a, #151515);"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="events-nav">
+      <a href="/index.html" class="nav-logo">EVENT<span style="color:var(--phosphor-blue)">SPHERE</span></a>
+      <div class="nav-links">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/events.html" class="nav-link">Events</a>
+        <a href="/my-bookings.html" class="nav-link" style="color:var(--phosphor-blue)">Bookings</a>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="bookings-container">
+      <h1 class="bookings-h1">Active<br />Reservations</h1>
+      <p class="bookings-p">// Manage your encrypted event passes</p>
+
+      <div id="loading" style="font-family:'JetBrains Mono', monospace; color:var(--phosphor-blue); margin-top:40px;">DECRYPTING BOOKING LEDGER...</div>
+      <div id="noBookings" class="hidden" style="font-family:'JetBrains Mono', monospace; color:#555; margin-top:40px;">// NO RESERVATIONS FOUND ON LEDGER</div>
+
+      <div id="bookingsList" class="bookings-list">
+        <!-- Bookings injected via JS -->
+      </div>
+    </main>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) window.location.href = "/login.html";
+
+      // Mouse Parallax for Blobs
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        const b1 = document.getElementById('blob1');
+        const b2 = document.getElementById('blob2');
+        if(b1) b1.style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+        if(b2) b2.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
+      });
+
+      window.onload = async () => {
+        try {
+          const response = await fetch(`http://localhost:5001/api/bookings/mybookings/${user.id}`);
+          const data = await response.json();
+          document.getElementById("loading").classList.add("hidden");
+
+          if (!response.ok || data.bookings.length === 0) {
+            document.getElementById("noBookings").classList.remove("hidden");
+            return;
+          }
+
+          renderBookings(data.bookings);
+        } catch (error) {
+          document.getElementById("loading").textContent = "CONNECTION ANOMALY DETECTED.";
+        }
+      };
+
+      function renderBookings(bookings) {
+        const list = document.getElementById("bookingsList");
+        list.innerHTML = "";
+
+        bookings.forEach(booking => {
+          const statusClass = booking.status === 'confirmed' ? 'status-confirmed' : 'status-cancelled';
+          const eventTitle = booking.eventId ? booking.eventId.title : "ARCHIVED EVENT";
+          const eventDate = booking.eventId ? new Date(booking.eventId.date).toLocaleDateString() : "N/A";
+          const eventLocation = booking.eventId ? booking.eventId.location : "N/A";
+
+          const card = `
+            <div class="booking-card">
+              <div class="card-left" style="flex:1;">
+                <div class="card-top">
+                  <h3 class="event-title">${eventTitle}</h3>
+                  <span class="status-badge ${statusClass}">${booking.status}</span>
+                </div>
+                <div class="card-details" style="margin-top: 16px;">
+                  <div>DATE <br/><span>${eventDate}</span></div>
+                  <div>LOC <br/><span>${eventLocation}</span></div>
+                  <div>PASSES <br/><span>x${booking.ticketsBooked}</span></div>
+                </div>
+              </div>
+              
+              <div style="display:flex; align-items:center; justify-content:center; padding: 0 30px;">
+                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${booking._id}&bgcolor=1a1a1a&color=00f2ff&margin=0" alt="Ticket QR" style="border-radius:4px; border:1px solid rgba(0,242,255,0.2);" />
+              </div>
+
+              <div class="card-bottom">
+                <div style="text-align: right;">
+                  <div class="total-label">Total Value</div>
+                  <div class="total-amount">₹${booking.totalPrice}</div>
+                </div>
+                ${booking.status === 'confirmed' ? `<button onclick="cancelBooking('${booking._id}')" class="cancel-btn">REVOKE PASS</button>` : ''}
+              </div>
+            </div>
+          `;
+          list.innerHTML += card;
+        });
+      }
+
+      async function cancelBooking(bookingId) {
+        if (!confirm("Are you sure you want to revoke this pass?")) return;
+        try {
+          const response = await fetch(`http://localhost:5001/api/bookings/cancel/${bookingId}`, { method: "PUT" });
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            const data = await response.json();
+            alert(data.message || "Revocation failed.");
+          }
+        } catch (error) {
+          alert("Server anomaly.");
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+      }
+    </script>
+  </body>
+</html>
