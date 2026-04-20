@@ -1,270 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Detail | EventSphere</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        --onyx-deep: #050505;
-        --onyx-surface: #0a0a0a;
-        --mercury: #e0e0e0;
-        --phosphor-blue: #00f2ff;
-        --viscous-ease: cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body {
-        background-color: var(--onyx-deep);
-        color: var(--mercury);
-        font-family: 'Inter', sans-serif;
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
-      /* ── FLUID BACKGROUND ── */
-      .liquid-bg { position: fixed; inset: 0; z-index: -1; filter: blur(80px); opacity: 0.6; pointer-events: none; overflow: hidden; }
-      .blob { position: absolute; background: linear-gradient(45deg, #1a1a1a, #000); border-radius: 50%; animation: drift 20s infinite alternate var(--viscous-ease); }
-      @keyframes drift { from { transform: translate(-10%, -10%) scale(1); } to { transform: translate(20%, 20%) scale(1.2); } }
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Detail | EventSphere</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    :root { --bg:#050505; --blue:#00f2ff; --ease:cubic-bezier(0.23,1,0.32,1); }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:#e0e0e0;font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+    .liquid-bg{position:fixed;inset:0;z-index:-1;filter:blur(80px);opacity:.6;pointer-events:none;}
+    .blob{position:absolute;border-radius:50%;animation:drift 20s infinite alternate var(--ease);}
+    @keyframes drift{from{transform:translate(-10%,-10%) scale(1);}to{transform:translate(20%,20%) scale(1.2);}}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(to bottom,rgba(5,5,5,.95),transparent);backdrop-filter:blur(4px);}
+    .nav-logo{font-weight:900;font-size:1.2rem;color:#fff;text-decoration:none;letter-spacing:2px;}
+    .nav-links{display:flex;gap:30px;}
+    .nav-link{color:#e0e0e0;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;transition:color .3s;}
+    .nav-link:hover{color:var(--blue);}
+    .logout-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#e0e0e0;padding:8px 16px;font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+    .logout-btn:hover{border-color:#ff4444;color:#ff4444;}
+    .container{max-width:1200px;margin:0 auto;padding:140px 40px 80px;}
+    .back-btn{display:inline-block;margin-bottom:40px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.7rem;padding:10px 20px;text-transform:uppercase;text-decoration:none;transition:all .3s;}
+    .back-btn:hover{border-color:var(--blue);color:var(--blue);}
+    .showcase{display:grid;grid-template-columns:1fr 1fr;gap:60px;animation:slideIn 1s var(--ease) both;}
+    @keyframes slideIn{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+    .visual{width:100%;aspect-ratio:4/5;background:#111;overflow:hidden;position:relative;border-radius:2px;}
+    .visual img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) brightness(.7);}
+    .info{display:flex;flex-direction:column;justify-content:center;}
+    .cat{font-family:'JetBrains Mono',monospace;color:var(--blue);font-size:.8rem;text-transform:uppercase;letter-spacing:.2em;margin-bottom:15px;}
+    .etitle{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:900;line-height:.9;letter-spacing:-2px;color:#fff;margin-bottom:20px;}
+    .edesc{font-size:.95rem;color:#888;line-height:1.6;margin-bottom:35px;}
+    .specs{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;}
+    .spec .label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#555;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:4px;}
+    .spec .val{font-size:1.1rem;font-weight:600;color:#e0e0e0;}
 
-      /* ── NAVBAR (Dark) ── */
-      .events-nav {
-        display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-        background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent); backdrop-filter: blur(4px);
-      }
-      .nav-logo { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.2rem; color: #fff; text-decoration: none; letter-spacing: 2px; }
-      .nav-links { display: flex; gap: 30px; }
-      .nav-link { color: var(--mercury); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s ease; }
-      .nav-link:hover { color: var(--phosphor-blue); }
-      .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.2); color: var(--mercury); padding: 8px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
-      .logout-btn:hover { border-color: #ff4444; color: #ff4444; }
+    /* ── PAYMENT TERMINAL ── */
+    .terminal{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.1);padding:28px;}
+    .term-header{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#555;border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:14px;margin-bottom:22px;display:flex;justify-content:space-between;}
+    .qty-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+    .qty-input{background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.2);color:#fff;font-family:'JetBrains Mono',monospace;font-size:2rem;width:80px;text-align:center;outline:none;transition:border-color .3s;}
+    .qty-input:focus{border-color:var(--blue);}
+    .total{font-size:2rem;font-weight:900;color:#fff;}
 
-      /* ── CONTENT ── */
-      .detail-container { max-width: 1200px; margin: 0 auto; padding: 140px 40px 80px 40px; position: relative; z-index: 5; }
-      .back-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 10px 20px; text-transform: uppercase; transition: all 0.3s ease; cursor: pointer; display: inline-block; margin-bottom: 40px; text-decoration: none;}
-      .back-btn:hover { border-color: var(--phosphor-blue); color: var(--phosphor-blue); }
+    /* Payment method selector */
+    .pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+    .pay-opt{border:1px solid rgba(255,255,255,.1);padding:14px 16px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:10px;border-radius:2px;}
+    .pay-opt:hover{border-color:rgba(0,242,255,.3);}
+    .pay-opt.selected{border-color:var(--blue);background:rgba(0,242,255,.06);box-shadow:0 0 12px rgba(0,242,255,.1);}
+    .pay-opt input[type=radio]{accent-color:var(--blue);width:14px;height:14px;flex-shrink:0;}
+    .pay-opt-info{display:flex;flex-direction:column;gap:2px;}
+    .pay-opt-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#ccc;}
+    .pay-opt-sub{font-size:.62rem;color:#555;font-family:'JetBrains Mono',monospace;}
+    .pay-opt.selected .pay-opt-title{color:var(--blue);}
 
-      .event-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; opacity: 0; animation: slideIn 1s forwards ease; }
-      @keyframes slideIn { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(40px); } }
+    .pay-btn{width:100%;background:var(--blue);color:#000;border:none;padding:16px;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.2em;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+    .pay-btn:hover:not(:disabled){box-shadow:0 0 30px rgba(0,242,255,.4);transform:translateY(-2px);}
+    .pay-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+    .cash-note{display:none;margin-bottom:16px;background:rgba(255,200,0,.06);border:1px solid rgba(255,200,0,.2);padding:12px 16px;border-radius:2px;}
+    .cash-note p{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#ffcc00;line-height:1.6;}
+    .sys-msg{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:.7rem;display:none;}
+    .sys-msg.err{color:#ff4444;display:block;}
+    .sys-msg.ok{color:var(--blue);display:block;}
+    @media(max-width:900px){.showcase{grid-template-columns:1fr;}.visual{aspect-ratio:16/9;}.container{padding:100px 20px 60px;}}
+  </style>
+</head>
+<body>
+  <div class="liquid-bg">
+    <div class="blob" style="width:600px;height:600px;top:-100px;left:-100px;background:linear-gradient(45deg,#111,#001f3f);"></div>
+    <div class="blob" style="width:500px;height:500px;bottom:0;right:0;background:linear-gradient(45deg,#0a0a0a,#151515);"></div>
+  </div>
 
-      .showcase-visual { width: 100%; aspect-ratio: 4/5; background: #111; overflow: hidden; position: relative; border-radius: 2px; }
-      .showcase-visual img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(0.7); }
-      
-      .showcase-info { display: flex; flex-direction: column; justify-content: center; }
-      .event-cat { font-family: 'JetBrains Mono', monospace; color: var(--phosphor-blue); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 15px; }
-      .event-title { font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 900; line-height: 0.9; letter-spacing: -2px; color: #fff; margin-bottom: 25px; }
-      .event-desc { font-size: 1rem; color: #888; line-height: 1.6; margin-bottom: 40px; max-width: 90%; }
-      
-      .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px; }
-      .spec-block .label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 5px; }
-      .spec-block .value { font-size: 1.2rem; font-weight: 600; color: #e0e0e0; }
-
-      /* ── TERMINAL UI FORM ── */
-      .booking-terminal { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); padding: 30px; }
-      .terminal-header { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #888; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between;}
-      
-      .input-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
-      .qty-input { background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: 'JetBrains Mono', inset; font-size: 2rem; width: 80px; text-align: center; outline: none; transition: border-color 0.3s;}
-      .qty-input:focus { border-color: var(--phosphor-blue); }
-      .total-amount { font-size: 2rem; font-weight: 900; color: #fff; }
-
-      .purchase-btn { width: 100%; background: var(--phosphor-blue); color: #000; border: none; padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
-      .purchase-btn:hover { box-shadow: 0 0 30px rgba(0,242,255,0.4); transform: translateY(-2px); }
-      .purchase-btn:active { transform: translateY(0); }
-      .purchase-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: translateY(0); box-shadow: none;}
-
-      .system-msg { margin-top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; display: none; }
-      .system-msg.error { color: #ff4444; display: block; }
-      .system-msg.success { color: var(--phosphor-blue); display: block; }
-
-      @media (max-width: 900px) {
-        .event-showcase { grid-template-columns: 1fr; }
-        .showcase-visual { aspect-ratio: 16/9; }
-      }
-    </style>
-  </head>
-  <body>
-
-    <!-- Fluid Background -->
-    <div class="liquid-bg">
-      <div id="blob1" class="blob" style="width: 600px; height: 600px; top: -100px; left: -100px; background: linear-gradient(45deg, #111, #001f3f);"></div>
-      <div id="blob2" class="blob" style="width: 500px; height: 500px; bottom: 0; right: 0; background: linear-gradient(45deg, #0a0a0a, #151515);"></div>
+  <nav class="nav">
+    <a href="/index.html" class="nav-logo">EVENT<span style="color:var(--blue)">SPHERE</span></a>
+    <div class="nav-links">
+      <a href="/index.html" class="nav-link">Home</a>
+      <a href="/events.html" class="nav-link" style="color:var(--blue)">Events</a>
+      <a href="/my-bookings.html" class="nav-link">Bookings</a>
     </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </nav>
 
-    <!-- Navigation -->
-    <nav class="events-nav">
-      <a href="/index.html" class="nav-logo">EVENT<span style="color:var(--phosphor-blue)">SPHERE</span></a>
-      <div class="nav-links">
-        <a href="/index.html" class="nav-link">Home</a>
-        <a href="/events.html" class="nav-link" style="color:var(--phosphor-blue)">Events</a>
-        <a href="/my-bookings.html" class="nav-link">Bookings</a>
-      </div>
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </nav>
+  <main class="container">
+    <a href="/events.html" class="back-btn">← Return to Events</a>
+    <div id="loading" style="font-family:'JetBrains Mono',monospace;color:var(--blue);text-align:center;padding:100px;">ESTABLISHING CONNECTION...</div>
+    <div id="eventContent" class="showcase" style="display:none;"></div>
+  </main>
 
-    <!-- CONTENT -->
-    <main class="detail-container">
-      <a href="/events.html" class="back-btn">&lt; ABORT // RETURN</a>
-      
-      <div id="loading" style="font-family:'JetBrains Mono', monospace; color:var(--phosphor-blue); text-align:center; padding: 100px;">ESTABLISHING CONNECTION...</div>
-      
-      <div id="eventContent" class="event-showcase" style="display:none;">
-        <!-- Injected via JS -->
-      </div>
-    </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get('id');
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+    let currentEvent = null;
+    let selectedMethod = 'online';
 
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const eventId = params.get("id");
-      const user = JSON.parse(localStorage.getItem("user"));
-      let currentEventPrice = 0;
+    if (!user) { window.location.href = '/login.html'; }
 
-      document.addEventListener('mousemove', (e) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        const b1 = document.getElementById('blob1');
-        const b2 = document.getElementById('blob2');
-        if(b1) b1.style.transform = `translate(${x * 30}px, ${y * 30}px)`;
-        if(b2) b2.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
-      });
+    const CAT_IMAGES = {
+      'Music':         'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1000&q=80',
+      'Technical':     'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&q=80',
+      'Sports':        'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1000&q=80',
+      'Cultural':      'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1000&q=80',
+      'Entertainment': 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=1000&q=80',
+    };
 
-      window.onload = async () => {
-        if (!eventId) {
-          document.getElementById("loading").textContent = "ERROR: 404 DATA CORRUPTED.";
-          return;
-        }
-        await fetchEvent();
-      };
+    window.onload = async () => {
+      if (!eventId) { document.getElementById('loading').textContent = '// 404 EVENT NOT FOUND'; return; }
+      try {
+        const res = await fetch(`http://localhost:5001/api/events/${eventId}`);
+        const data = await res.json();
+        document.getElementById('loading').style.display = 'none';
+        if (!res.ok) { document.getElementById('loading').textContent = '// EVENT DATA MISSING'; return; }
+        currentEvent = data.event;
+        renderEvent(data.event);
+      } catch {
+        document.getElementById('loading').textContent = '// SERVER UNREACHABLE';
+      }
+    };
 
-      async function fetchEvent() {
-        try {
-          const response = await fetch(`http://localhost:5001/api/events/${eventId}`);
-          const data = await response.json();
-          document.getElementById("loading").style.display = "none";
+    function renderEvent(ev) {
+      const img = CAT_IMAGES[ev.category] || CAT_IMAGES['Cultural'];
+      const isFree = ev.price === 0;
+      document.getElementById('eventContent').style.display = 'grid';
+      document.getElementById('eventContent').innerHTML = `
+        <div class="visual">
+          <span style="position:absolute;top:16px;left:16px;color:#fff;font-family:'JetBrains Mono';font-size:.6rem;letter-spacing:.2em;z-index:10;background:rgba(0,0,0,.6);padding:4px 10px;">${ev.category.toUpperCase()}</span>
+          <img src="${img}" alt="${ev.title}"/>
+        </div>
+        <div class="info">
+          <span class="cat">// ${ev.category}</span>
+          <h1 class="etitle">${ev.title}</h1>
+          <p class="edesc">${ev.description}</p>
+          <div class="specs">
+            <div class="spec"><span class="label">Date</span><span class="val">${new Date(ev.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span></div>
+            <div class="spec"><span class="label">Location</span><span class="val">${ev.location}</span></div>
+            <div class="spec"><span class="label">Available Seats</span><span class="val">${ev.availableSeats} / ${ev.totalSeats}</span></div>
+            <div class="spec"><span class="label">Price / Pass</span><span class="val" style="color:var(--blue)">${isFree ? 'FREE' : '₹'+ev.price.toLocaleString()}</span></div>
+          </div>
 
-          if (!response.ok) {
-            const err = document.createElement("div");
-            err.innerHTML = `<p style="color:#ff4444; font-family:'JetBrains Mono'; text-align:center;">// SECURITY CLEARANCE DENIED / EVENT MISSING.</p>`;
-            document.querySelector(".detail-container").appendChild(err);
-            return;
-          }
+          <div class="terminal">
+            <div class="term-header"><span>SECURE_TRANSACTION_PROTOCOL</span><span style="color:${ev.availableSeats>0?'#00f2ff':'#ff4444'}">${ev.availableSeats>0?'SEATS AVAILABLE':'SOLD OUT'}</span></div>
 
-          renderEvent(data.event);
-        } catch (error) {
-          document.getElementById("loading").textContent = "CRITICAL SERVER ANOMALY.";
-        }
+            <div class="qty-row">
+              <div>
+                <span style="font-family:'JetBrains Mono';font-size:.62rem;color:#555;display:block;margin-bottom:8px;">QTY //</span>
+                <input type="number" id="ticketCount" class="qty-input" value="1" min="1" max="${ev.availableSeats}" oninput="updateTotal()"/>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-family:'JetBrains Mono';font-size:.62rem;color:#555;display:block;margin-bottom:8px;">TOTAL //</span>
+                <div class="total" id="totalPrice">${isFree ? 'FREE' : '₹'+ev.price.toLocaleString()}</div>
+              </div>
+            </div>
+
+            ${isFree ? '' : `
+            <div style="margin-bottom:16px;">
+              <span style="font-family:'JetBrains Mono';font-size:.62rem;color:#555;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:10px;">Payment Method //</span>
+              <div class="pay-methods">
+                <label class="pay-opt selected" id="opt-online" onclick="selectMethod('online')">
+                  <input type="radio" name="payMethod" value="online" checked/>
+                  <div class="pay-opt-info">
+                    <span class="pay-opt-title">💳 Pay Online</span>
+                    <span class="pay-opt-sub">Card / UPI / NetBanking</span>
+                  </div>
+                </label>
+                <label class="pay-opt" id="opt-cash" onclick="selectMethod('cash')">
+                  <input type="radio" name="payMethod" value="cash"/>
+                  <div class="pay-opt-info">
+                    <span class="pay-opt-title">💵 Pay at Venue</span>
+                    <span class="pay-opt-sub">Reserve now, cash later</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="cash-note" id="cashNote">
+              <p>ℹ️ &nbsp;Your seat is reserved. Please carry this booking confirmation and pay <strong>cash at the venue gate</strong> at least 30 minutes before the event starts. Unpaid reservations are auto-cancelled 1 hour before start.</p>
+            </div>
+            `}
+
+            <button class="pay-btn" id="payBtn" onclick="handlePayment('${ev._id}')" ${ev.availableSeats<1?'disabled':''}>
+              ${isFree ? 'REGISTER FREE' : 'PROCEED TO PAYMENT'}
+            </button>
+            <div id="sysMsg" class="sys-msg"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectMethod(method) {
+      selectedMethod = method;
+      document.getElementById('opt-online').classList.toggle('selected', method === 'online');
+      document.getElementById('opt-cash').classList.toggle('selected', method === 'cash');
+      document.getElementById('cashNote').style.display = method === 'cash' ? 'block' : 'none';
+      document.getElementById('payBtn').textContent = method === 'cash' ? 'RESERVE SEAT — PAY AT VENUE' : 'PROCEED TO PAYMENT';
+    }
+
+    function updateTotal() {
+      if (!currentEvent) return;
+      const qty = parseInt(document.getElementById('ticketCount').value) || 0;
+      const total = qty * currentEvent.price;
+      document.getElementById('totalPrice').textContent = currentEvent.price === 0 ? 'FREE' : '₹' + total.toLocaleString();
+    }
+
+    function showMsg(txt, type) {
+      const el = document.getElementById('sysMsg');
+      el.textContent = txt;
+      el.className = 'sys-msg ' + (type === 'error' ? 'err' : 'ok');
+    }
+
+    async function handlePayment(evId) {
+      const qty = parseInt(document.getElementById('ticketCount').value);
+      const btn = document.getElementById('payBtn');
+
+      if (!qty || qty < 1) { showMsg('// INVALID QUANTITY', 'error'); return; }
+      if (qty > currentEvent.availableSeats) { showMsg('// NOT ENOUGH SEATS', 'error'); return; }
+
+      // Free event — direct booking
+      if (currentEvent.price === 0) {
+        await doCashBooking(evId, qty, btn, true);
+        return;
       }
 
-      function renderEvent(event) {
-        currentEventPrice = event.price;
-        const content = document.getElementById("eventContent");
-        
-        const defImages = {
-            'Technical': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&q=80',
-            'Cultural': 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1000&q=80',
-            'Sports': 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1000&q=80'
+      if (selectedMethod === 'cash') {
+        await doCashBooking(evId, qty, btn, false);
+      } else {
+        await doRazorpay(evId, qty, btn);
+      }
+    }
+
+    async function doCashBooking(evId, qty, btn, isFree) {
+      btn.textContent = 'RESERVING...';
+      btn.disabled = true;
+      try {
+        const res = await fetch('http://localhost:5001/api/payment/cash', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ userId: user.id, eventId: evId, ticketsBooked: qty }),
+        });
+        const data = await res.json();
+        if (!res.ok) { showMsg('// ' + data.message, 'error'); btn.textContent = isFree ? 'REGISTER FREE' : 'RESERVE SEAT — PAY AT VENUE'; btn.disabled = false; return; }
+        showMsg(isFree ? '// REGISTRATION CONFIRMED — REDIRECTING...' : '// SEAT RESERVED — REDIRECTING TO YOUR BOOKINGS...', 'success');
+        setTimeout(() => { window.location.href = '/my-bookings.html'; }, 2000);
+      } catch {
+        showMsg('// SERVER UNREACHABLE', 'error');
+        btn.disabled = false;
+      }
+    }
+
+    async function doRazorpay(evId, qty, btn) {
+      btn.textContent = 'CREATING ORDER...';
+      btn.disabled = true;
+      const total = currentEvent.price * qty;
+
+      try {
+        const res = await fetch('http://localhost:5001/api/payment/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ amount: total, receipt: `evt_${evId}_${Date.now()}` }),
+        });
+        const order = await res.json();
+
+        if (!res.ok) { showMsg('// PAYMENT GATEWAY ERROR: ' + order.message, 'error'); btn.textContent = 'PROCEED TO PAYMENT'; btn.disabled = false; return; }
+
+        const options = {
+          key: order.keyId,
+          amount: order.amount,
+          currency: order.currency,
+          name: 'EventSphere',
+          description: `${currentEvent.title} × ${qty}`,
+          order_id: order.orderId,
+          prefill: { name: user.name, email: user.email },
+          theme: { color: '#00f2ff' },
+          handler: async (response) => {
+            btn.textContent = 'VERIFYING...';
+            try {
+              const vRes = await fetch('http://localhost:5001/api/payment/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  userId: user.id,
+                  eventId: evId,
+                  ticketsBooked: qty,
+                }),
+              });
+              const vData = await vRes.json();
+              if (vRes.ok && vData.success) {
+                showMsg('// PAYMENT SUCCESSFUL — REDIRECTING TO YOUR TICKETS...', 'success');
+                setTimeout(() => { window.location.href = '/my-bookings.html'; }, 2000);
+              } else {
+                showMsg('// PAYMENT VERIFICATION FAILED: ' + vData.message, 'error');
+                btn.textContent = 'PROCEED TO PAYMENT'; btn.disabled = false;
+              }
+            } catch { showMsg('// VERIFICATION SERVER ERROR', 'error'); btn.disabled = false; }
+          },
+          modal: {
+            ondismiss: () => { showMsg('// PAYMENT CANCELLED', 'error'); btn.textContent = 'PROCEED TO PAYMENT'; btn.disabled = false; }
+          }
         };
-        const imgUrl = defImages[event.category] || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1000&q=80';
 
-        content.style.display = "grid";
-        content.innerHTML = `
-          <div class="showcase-visual">
-            <span style="position:absolute; top:20px; left:20px; color:#fff; font-family:'JetBrains Mono'; font-size:0.6rem; letter-spacing:0.2em; z-index:10; background:rgba(0,0,0,0.5); padding:4px 8px;">LIVE FEED</span>
-            <img src="${imgUrl}" alt="Event" />
-          </div>
-          
-          <div class="showcase-info">
-            <span class="event-cat">// ${event.category}</span>
-            <h1 class="event-title">${event.title}</h1>
-            <p class="event-desc">${event.description}</p>
-            
-            <div class="specs-grid">
-              <div class="spec-block"><span class="label">DATE</span><span class="value">${new Date(event.date).toLocaleDateString()}</span></div>
-              <div class="spec-block"><span class="label">LOCATION</span><span class="value">${event.location}</span></div>
-              <div class="spec-block"><span class="label">CAPACITY STATUS</span><span class="value">${event.availableSeats}/${event.totalSeats} LIVE</span></div>
-              <div class="spec-block"><span class="label">COST/PASS</span><span class="value">₹${event.price}</span></div>
-            </div>
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', (resp) => { showMsg('// PAYMENT FAILED: ' + resp.error.description, 'error'); btn.textContent = 'PROCEED TO PAYMENT'; btn.disabled = false; });
+        rzp.open();
 
-            <div class="booking-terminal">
-              <div class="terminal-header">
-                <span>SECURE_TRANSACTION_PROTOCOL</span>
-                <span>STATUS: OPERATIONAL</span>
-              </div>
-              <div class="input-row">
-                <div>
-                  <span style="font-family:'JetBrains Mono'; font-size:0.65rem; color:#888; display:block; margin-bottom:8px;">QTY //</span>
-                  <input type="number" id="ticketCount" class="qty-input" value="1" min="1" max="${event.availableSeats}" oninput="updateTotal()"/>
-                </div>
-                <div style="text-align:right;">
-                  <span style="font-family:'JetBrains Mono'; font-size:0.65rem; color:#888; display:block; margin-bottom:8px;">TOTAL //</span>
-                  <div class="total-amount" id="totalPrice">₹${event.price}</div>
-                </div>
-              </div>
-              <button class="purchase-btn" id="bookBtn" onclick="bookTicket('${event._id}')">INITIALIZE PURCHASE</button>
-              <div id="sysMsg" class="system-msg"></div>
-            </div>
-          </div>
-        `;
-      }
+      } catch { showMsg('// GATEWAY UNREACHABLE', 'error'); btn.textContent = 'PROCEED TO PAYMENT'; btn.disabled = false; }
+    }
 
-      function updateTotal() {
-        const count = parseInt(document.getElementById("ticketCount").value) || 0;
-        document.getElementById("totalPrice").textContent = "₹" + (count * currentEventPrice);
-      }
-
-      async function bookTicket(eventId) {
-        const sysMsg = document.getElementById("sysMsg");
-        const bookBtn = document.getElementById("bookBtn");
-        const ticketCount = document.getElementById("ticketCount").value;
-
-        sysMsg.className = "system-msg";
-        sysMsg.textContent = "";
-
-        if (!user) {
-          sysMsg.textContent = "AUTH_FAILED: LOGIN REQUIRED";
-          sysMsg.classList.add("error");
-          setTimeout(() => { window.location.href = "/login.html"; }, 1500);
-          return;
-        }
-
-        if (!ticketCount || ticketCount < 1) {
-          sysMsg.textContent = "SYNTAX_ERROR: INVALID QTY";
-          sysMsg.classList.add("error");
-          return;
-        }
-
-        bookBtn.textContent = "PROCESSING...";
-        bookBtn.disabled = true;
-
-        try {
-          const response = await fetch("http://localhost:5001/api/bookings/book", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: user.id, eventId: eventId, ticketsBooked: parseInt(ticketCount) }),
-          });
-          const data = await response.json();
-
-          if (!response.ok) {
-            sysMsg.textContent = "TRANSACTION_DENIED: " + data.message;
-            sysMsg.classList.add("error");
-            bookBtn.textContent = "RETRY PURCHASE";
-            bookBtn.disabled = false;
-            return;
-          }
-
-          sysMsg.textContent = "TRANSACTION_SUCCESS: REDIRECTING TO LEDGER...";
-          sysMsg.classList.add("success");
-          setTimeout(() => { window.location.href = "/my-bookings.html"; }, 2000);
-        } catch (error) {
-          sysMsg.textContent = "NETWORK_ERROR: LINK SEVERED";
-          sysMsg.classList.add("error");
-          bookBtn.textContent = "INITIALIZE PURCHASE";
-          bookBtn.disabled = false;
-        }
-      }
-
-      function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
-    </script>
-  </body>
+    function logout() { localStorage.removeItem('user'); localStorage.removeItem('token'); window.location.href = '/login.html'; }
+  </script>
+</body>
 </html>

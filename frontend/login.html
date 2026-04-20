@@ -661,6 +661,7 @@
         }
 
         localStorage.setItem('user', JSON.stringify(data.user));
+        if (data.token) localStorage.setItem('token', data.token);
         showMsg('loginSuccess', '// Auth successful — redirecting...', 'success');
 
         setTimeout(() => {
@@ -715,6 +716,8 @@
           return;
         }
 
+        if (data.token) localStorage.setItem('token', data.token);
+        if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
         showMsg('regSuccess', '// Account created — switching to login...', 'success');
 
         setTimeout(() => {
@@ -768,6 +771,7 @@
             }
 
             localStorage.setItem('user', JSON.stringify(data.user));
+            if (data.token) localStorage.setItem('token', data.token);
             showMsg('loginSuccess', '// Google auth successful — redirecting...', 'success');
             setTimeout(() => {
               window.location.href = data.user.role === 'admin' ? '/admin-dashboard.html' : '/events.html';
