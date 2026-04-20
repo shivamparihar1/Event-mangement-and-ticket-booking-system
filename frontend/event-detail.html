@@ -460,7 +460,7 @@
     window.onload = async () => {
       if (!eventId) { document.getElementById('loading').textContent = '// 404 EVENT NOT FOUND'; return; }
       try {
-        const res = await fetch(`http://localhost:5001/api/events/${eventId}`);
+        const res = await fetch(`https://event-mangement-and-ticket-booking.onrender.com/api/events/${eventId}`);
         const data = await res.json();
         document.getElementById('loading').style.display = 'none';
         if (!res.ok) { document.getElementById('loading').textContent = '// EVENT DATA MISSING'; return; }
@@ -584,7 +584,7 @@
       btn.textContent = 'RESERVING...';
       btn.disabled = true;
       try {
-        const res = await fetch('http://localhost:5001/api/payment/cash', {
+        const res = await fetch('https://event-mangement-and-ticket-booking.onrender.com/api/payment/cash', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
           body: JSON.stringify({ userId: user.id, eventId: evId, ticketsBooked: qty }),
@@ -605,7 +605,7 @@
       const total = currentEvent.price * qty;
 
       try {
-        const res = await fetch('http://localhost:5001/api/payment/create-order', {
+        const res = await fetch('https://event-mangement-and-ticket-booking.onrender.com/api/payment/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
           body: JSON.stringify({ amount: total, receipt: `evt_${evId}_${Date.now()}` }),
@@ -626,7 +626,7 @@
           handler: async (response) => {
             btn.textContent = 'VERIFYING...';
             try {
-              const vRes = await fetch('http://localhost:5001/api/payment/verify', {
+              const vRes = await fetch('https://event-mangement-and-ticket-booking.onrender.com/api/payment/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
                 body: JSON.stringify({

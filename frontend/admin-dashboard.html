@@ -188,7 +188,7 @@
 
       async function fetchEvents() {
         try {
-          const response = await fetch("http://localhost:5001/api/events/all");
+          const response = await fetch("https://event-mangement-and-ticket-booking.onrender.com/api/events/all");
           const data = await response.json();
           document.getElementById("loading").style.display = "none";
           if (!response.ok || data.events.length === 0) {
@@ -250,7 +250,7 @@
         formMsg.className = "system-msg";
 
         try {
-          const response = await fetch("http://localhost:5001/api/events/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newEvent) });
+          const response = await fetch("https://event-mangement-and-ticket-booking.onrender.com/api/events/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newEvent) });
           if (response.ok) {
             formMsg.textContent = "NODE_CREATED: REGISTRY UPDATED";
             formMsg.classList.add("success");
@@ -273,7 +273,7 @@
       async function deleteEvent(eventId) {
         if (!confirm("WARNING: Deleting this node will sever attached booking ledgers. Proceed?")) return;
         try {
-          const response = await fetch(`http://localhost:5001/api/events/delete/${eventId}`, { method: "DELETE" });
+          const response = await fetch(`https://event-mangement-and-ticket-booking.onrender.com/api/events/delete/${eventId}`, { method: "DELETE" });
           if (response.ok) fetchEvents();
           else alert("TERMINATION FAILED: CHECK PERMISSIONS.");
         } catch (error) { alert("SERVER ERROR."); }

@@ -188,7 +188,7 @@
         try {
           const token = localStorage.getItem('token');
           const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-          const response = await fetch('http://localhost:5001/api/events/all', { headers });
+          const response = await fetch('https://event-mangement-and-ticket-booking.onrender.com/api/events/all', { headers });
           const data = await response.json();
           document.getElementById('loading').classList.add('hidden');
 
